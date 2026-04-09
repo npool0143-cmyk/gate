@@ -4,10 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NATHN | Music Portal</title>
+    <link rel="icon" type="image/png" href="assets/nathn-logo.png">
+    
     <style>
         :root { --accent: #ff5500; --bg: #000; --card: #0a0a0a; --grey: #222; }
         body { background: var(--bg); color: #fff; font-family: 'Helvetica', sans-serif; margin: 0; padding: 50px 20px; text-align: center; }
         
+        /* Logo Styles */
+        .logo-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .main-logo {
+            max-width: 200px; /* Adjust this to change logo size */
+            height: auto;
+        }
+
         h1 { font-size: 2.5rem; letter-spacing: 8px; text-transform: uppercase; margin-bottom: 10px; }
         p { color: #666; letter-spacing: 2px; margin-bottom: 50px; font-size: 0.9rem; }
 
@@ -26,6 +40,10 @@
     </style>
 </head>
 <body>
+
+    <div class="logo-container">
+        <img src="assets/nathn-logo.png" alt="NATHN" class="main-logo">
+    </div>
 
     <h1>NATHN</h1>
     <p>FREE DOWNLOADS & EXCLUSIVES</p>
