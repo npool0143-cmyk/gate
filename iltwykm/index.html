@@ -1,1 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NATHN | Verified Download</title>
+    <style>
+        :root { --accent: #ff5500; --bg: #000; --card: #0a0a0a; --grey: #222; --success: #1db954; }
+        body { background: var(--bg); color: #fff; font-family: 'Helvetica', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 40px 0; }
+        
+        .container { width: 90%; max-width: 420px; background: var(--card); padding: 40px 40px 40px 30px; border-radius: 16px; border: 1px solid var(--grey); box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center; position: relative; }
+        
+        .top-artwork { width: 100%; aspect-ratio: 1/1; border-radius: 12px; object-fit: cover; margin-bottom: 25px; border: 1px solid var(--grey); }
 
+        .promo-badge {
+            background: var(--accent);
+            color: #fff;
+            font-size: 9px;
+            font-weight: bold;
+            text-transform: uppercase;
+            padding: 4px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 15px;
+            letter-spacing: 1px;
+            box-shadow: 0 0 15px rgba(255, 85, 0, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(0.98); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        h1 { font-size: 1.8rem; letter-spacing: 4px; text-transform: uppercase; margin: 0; }
+        .track-sub { color: #666; font-size: 0.8rem; margin-bottom: 10px; text-transform: uppercase; }
+        .support-text { color: #aaa; font-size: 11px; margin-bottom: 40px; font-weight: 300; letter-spacing: 0.5px; }
+        
+        .step-row { display: flex; align-items: flex-start; margin-bottom: 30px; position: relative; text-align: left; }
+        .step-row:not(:last-child)::after { content: ''; position: absolute; left: 19px; top: 40px; width: 2px; height: calc(100% - 10px); background: var(--grey); z-index: 1; }
+        
+        .icon { width: 38px; height: 38px; background: var(--grey); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 20px; flex-shrink: 0; z-index: 2; position: relative; border: 3px solid var(--bg); font-size: 12px; font-weight: bold; }
+        .active .icon { background: var(--accent); box-shadow: 0 0 15px rgba(255,85,0,0.3); }
+        .completed .icon { background: var(--success); }
+        
+        .btn { display: block; width: 100%; padding: 12px; border: 1px solid var(--grey); border-radius: 8px; background: transparent; color: #fff; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; text-decoration: none; text-align: center; transition: all 0.3s ease; }
+        .btn.disabled { opacity: 0.5; pointer-events: none; cursor: not-allowed; }
+        
+        input { width: 100%; padding: 12px; border: 1px solid var(--grey); border-radius: 8px; background: #111; color: #fff; box-sizing: border-box; outline: none; margin-top: 5px; font-size: 13px; transition: opacity 0.3s ease; }
+        input:disabled { opacity: 0.3; cursor: not-allowed; }
+        
+        #msg { font-size: 11px; color: var(--accent); margin-top: 10px; font-weight: bold; display: none; text-transform: uppercase; letter-spacing: 1px; }
+
+        .bottom-player { width: 100%; border-radius: 12px; overflow: hidden; margin-top: 40px; border: 1px solid var(--grey); background: #000; height: 120px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <img src="https://i1.sndcdn.com/artworks-TfDqZ9wM517qg73w-v7Yn9w-t1080x1080.jpg" class="top-artwork" alt="Track Artwork">
+
+    <div class="promo-badge">Free Download for a Limited Time</div>
+    <h1>NATHN</h1>
+    <div class="track-sub">I Like The Way You Kiss Me (Remix)</div>
+    <div class="support-text">Please support the artist to unlock your download</div>
+
+    <div class="step-row active" id="s1">
+        <div class="icon">1</div>
+        <div style="flex:1"><a href="https://soundcloud.com/nathn-techno" target="_blank" class="btn" id="btn-1" onclick="done(1)">Follow on SoundCloud</a></div>
+    </div>
+
+    <div class="step-row" id="s2">
+        <div class="icon">2</div>
+        <div style="flex:1"><a href="https://www.instagram.com/nathn.techno" target="_blank" class="btn disabled" id="btn-2" onclick="done(2)">Follow on Instagram</a></div>
+    </div>
+
+    <div class="step-row" id="s3">
+        <div class="icon">3</div>
+        <div style="flex:1"><a href="https://soundcloud.com/nathn-techno/i-like-the-way-you-kiss-me-hard-techno-remix#comments" id="comment-link" target="_blank" class="btn disabled" onclick="done(3)">Like & Comment on track</a></div>
+    </div>
+
+    <div class="step-row" id="s4">
+        <div class="icon">4</div>
+        <div style="flex:1"><input type="text" id="sc-user" placeholder="Name" disabled></div>
+    </div>
+
+    <div class="step-row" id="s5">
+        <div class="icon">5</div>
+        <div style="flex:1"><input type="email" id="email" placeholder="Email Address" disabled></div>
+    </div>
+
+    <div class="step-row" id="s6">
+        <div class="icon">6</div>
+        <div style="flex:1">
+            <button class="btn" id="main-btn" style="background:#fff; color:#000; opacity: 0.5;" onclick="verify()" disabled>Verify & Download</button>
+            <div id="msg">CHECKING... PLEASE WAIT</div>
+        </div>
+    </div>
+
+    <div class="bottom-player">
+        <iframe width="100%" height="120" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/1790067580&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
+    </div>
+</div>
+
+<script>
+    const CONFIG = {
+        trackId: "1790067580",
+        // Direct Download Link generated from your ID
+        downloadUrl: "https://drive.google.com/uc?export=download&id=1I77JpMwMRRb6NZHSKefX0JO7o7i9lQ2f",
+        pipedreamUrl: "https://eoobcjspcppb2jy.m.pipedream.net"
+    };
+
+    function done(n) {
+        let currentBtn;
+        if(n === 1) currentBtn = document.getElementById('btn-1');
+        if(n === 2) currentBtn = document.getElementById('btn-2');
+        if(n === 3) currentBtn = document.getElementById('comment-link');
+        
+        const originalText = currentBtn.innerText;
+        currentBtn.innerText = "WAITING...";
+        currentBtn.style.opacity = "0.7";
+        currentBtn.style.pointerEvents = "none";
+
+        setTimeout(() => {
+            document.getElementById(`s${n}`).classList.replace('active', 'completed');
+            currentBtn.innerText = originalText;
+            currentBtn.style.opacity = "1";
+            currentBtn.style.pointerEvents = "auto";
+            
+            const nextStepRow = document.getElementById(`s${n+1}`);
+            if(nextStepRow) nextStepRow.classList.add('active');
+            
+            if(n === 1) document.getElementById('btn-2').classList.remove('disabled');
+            if(n === 2) document.getElementById('comment-link').classList.remove('disabled');
+            if(n === 3) {
+                document.getElementById('sc-user').disabled = false;
+                document.getElementById('email').disabled = false;
+                const mainBtn = document.getElementById('main-btn');
+                mainBtn.disabled = false;
+                mainBtn.style.opacity = "1";
+            }
+        }, 3000); 
+    }
+
+    document.getElementById('sc-user').addEventListener('blur', function() {
+        if(this.value.trim().length > 1) {
+            document.getElementById('s4').classList.replace('active', 'completed');
+            document.getElementById('s5').classList.add('active');
+        }
+    });
+
+    document.getElementById('email').addEventListener('blur', function() {
+        if(this.value.includes('@')) {
+            document.getElementById('s5').classList.replace('active', 'completed');
+            document.getElementById('s6').classList.add('active');
+        }
+    });
+
+    async function verify() {
+        const user = document.getElementById('sc-user').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const trackName = document.querySelector('.track-sub').innerText;
+        const btn = document.getElementById('main-btn');
+        const msg = document.getElementById('msg');
+
+        if(!user || !email.includes('@')) { 
+            alert("Please enter your name and valid email."); 
+            return; 
+        }
+
+        document.getElementById('sc-user').disabled = true;
+        document.getElementById('email').disabled = true;
+        btn.disabled = true;
+        btn.innerText = "VERIFYING...";
+        msg.style.display = "block";
+
+        fetch(CONFIG.pipedreamUrl, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ sc_user: user, email: email, track_id: CONFIG.trackId, track_name: trackName, type: "ghost_gate_signup" })
+        }).catch(e => console.log("Log saved"));
+
+        let secondsLeft = 3;
+        const countdown = setInterval(() => {
+            secondsLeft--;
+            msg.innerText = `Verifying actions... (${secondsLeft}s)`;
+            if (secondsLeft <= 0) {
+                clearInterval(countdown);
+                document.getElementById('s6').classList.replace('active', 'completed');
+                btn.style.background = "#1db954"; 
+                btn.style.color = "#fff"; 
+                btn.innerText = "VERIFIED - DOWNLOAD STARTING";
+                msg.innerText = "THANK YOU FOR THE SUPPORT!";
+                msg.style.color = "#1db954";
+                setTimeout(() => {
+                    window.location.href = CONFIG.downloadUrl;
+                }, 1000);
+            }
+        }, 1000);
+    }
+</script>
+</body>
+</html>
