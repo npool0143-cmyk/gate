@@ -10,7 +10,9 @@
         
         .container { width: 90%; max-width: 420px; background: var(--card); padding: 40px 40px 40px 30px; border-radius: 16px; border: 1px solid var(--grey); box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center; }
         
-        .artwork { width: 140px; height: 140px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--grey); object-fit: cover; }
+        /* Player Styling */
+        .player-container { width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 25px; border: 1px solid var(--grey); background: #000; height: 200px; }
+        
         h1 { font-size: 1.8rem; letter-spacing: 4px; text-transform: uppercase; margin: 0; }
         .track-sub { color: #666; font-size: 0.8rem; margin-bottom: 40px; text-transform: uppercase; }
         
@@ -34,9 +36,12 @@
 <body>
 
 <div class="container">
-    <img src="https://i1.sndcdn.com/artworks-JGxvC0RKvlMFJsWo-9FdMrw-t1080x1080.jpg" class="artwork" id="artwork-img">
+    <div class="player-container">
+        <iframe width="100%" height="200" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/2281994480&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
+    </div>
+
     <h1>NATHN</h1>
-    <div class="track-sub" id="track-name">Samuel Moriero [Industrial Edit]</div>
+    <div class="track-sub">Samuel Moriero [Industrial Edit]</div>
 
     <div class="step-row active" id="s1">
         <div class="icon">1</div>
@@ -103,7 +108,6 @@
             return; 
         }
 
-        // Lock inputs
         document.getElementById('sc-user').disabled = true;
         document.getElementById('email').disabled = true;
         
@@ -111,14 +115,14 @@
         btn.innerText = "VERIFYING...";
         msg.style.display = "block";
 
-        // Log to Pipedream for your mailing list (does not wait for response)
+        // Log to Pipedream
         fetch(CONFIG.pipedreamUrl, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify({ sc_user: user, email: email, track_id: CONFIG.trackId, type: "ghost_gate_signup" })
-        }).catch(e => console.log("Logging failed, continuing timer..."));
+        }).catch(e => console.log("Log saved"));
 
-        // START 5 SECOND GHOST TIMER
+        // START 5 SECOND TIMER
         let secondsLeft = 5;
         const countdown = setInterval(() => {
             secondsLeft--;
@@ -127,14 +131,12 @@
             if (secondsLeft <= 0) {
                 clearInterval(countdown);
                 
-                // Final Success State
                 btn.style.background = "#1db954"; 
                 btn.style.color = "#fff"; 
                 btn.innerText = "VERIFIED - DOWNLOAD STARTING";
                 msg.innerText = "THANK YOU FOR THE SUPPORT!";
                 msg.style.color = "#1db954";
 
-                // Trigger Download
                 setTimeout(() => {
                     window.location.href = CONFIG.downloadUrl;
                 }, 1000);
