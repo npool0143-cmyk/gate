@@ -66,8 +66,9 @@
 <script>
     const urlParams = new URLSearchParams(window.location.search);
     
-    // YOUR WORKER URL
+    // ENDPOINTS
     const WORKER_URL = "https://soundcloud-gate.npool0143.workers.dev"; 
+    const PIPEDREAM_URL = "https://eoobcjspcppb2jy.m.pipedream.net"; 
 
     const CONFIG = {
         clientId: "5ChG6y33NgVn7MfiTrHOUoo35Dz1XDLf",
@@ -84,7 +85,6 @@
 
     let authCode = null;
 
-    // Detect if this is the popup redirect
     if (window.opener && window.location.search.includes("code=")) {
         const code = new URLSearchParams(window.location.search).get("code");
         window.opener.postMessage({type: "SC_CODE", code: code}, "*");
@@ -130,13 +130,26 @@
         const btn = document.getElementById('main-btn');
         const msg = document.getElementById('msg');
         const commentText = document.getElementById('sc-comment').value || "Sick track! 🔥";
+        const fanEmail = document.getElementById('email').value;
         
         btn.innerText = "PROCESSING...";
         msg.style.display = "block";
-        msg.innerText = "UPDATING SOUNDCLOUD STATS...";
+        msg.innerText = "SAVING DATA & UPDATING SOUNDCLOUD...";
 
         try {
-            // Talk to your Cloudflare Worker
+            // 1. LOG TO PIPEDREAM (Standalone Email Capture)
+            // Uses your exact spreadsheet field mappings
+            fetch(PIPEDREAM_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fan_username: "NATHN_FAN", 
+                    fan_email: fanEmail,
+                    track_name: CONFIG.trackTitle
+                })
+            });
+
+            // 2. SOUNDCLOUD ACTIONS (Worker)
             const response = await fetch(WORKER_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -153,12 +166,11 @@
             if (result.success) {
                 msg.innerText = "ALL ACTIONS COMPLETED!";
             } else {
-                console.error("Worker error:", result.error);
-                msg.innerText = "AUTH SUCCESSFUL, STARTING DOWNLOAD...";
+                msg.innerText = "STARTING DOWNLOAD...";
             }
         } catch (e) {
-            console.error("Fetch error:", e);
-            msg.innerText = "CONNECTION BUSY, STARTING DOWNLOAD...";
+            console.error("Error:", e);
+            msg.innerText = "STARTING DOWNLOAD...";
         }
 
         setTimeout(() => {
