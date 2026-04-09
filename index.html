@@ -10,33 +10,30 @@
         :root { --accent: #ff5500; --bg: #000; --card: #0a0a0a; --grey: #222; }
         body { background: var(--bg); color: #fff; font-family: 'Helvetica', sans-serif; margin: 0; padding: 50px 20px; text-align: center; }
         
-        /* Logo Styles */
-        .logo-container {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        .main-logo {
-            max-width: 200px; /* Adjust this to change logo size */
-            height: auto;
-        }
+        .logo-container { width: 100%; display: flex; justify-content: center; margin-bottom: 20px; }
+        .main-logo { max-width: 200px; height: auto; }
 
         h1 { font-size: 2.5rem; letter-spacing: 8px; text-transform: uppercase; margin-bottom: 10px; }
         p { color: #666; letter-spacing: 2px; margin-bottom: 50px; font-size: 0.9rem; }
 
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1000px; margin: 0 auto; }
         
-        .track-card { background: var(--card); border: 1px solid var(--grey); border-radius: 16px; padding: 20px; transition: transform 0.3s ease; }
-        .track-card:hover { transform: translateY(-10px); border-color: var(--accent); }
+        /* Make the whole link behave like a block */
+        .card-link { text-decoration: none; color: inherit; display: block; }
+
+        .track-card { background: var(--card); border: 1px solid var(--grey); border-radius: 16px; padding: 20px; transition: all 0.3s ease; cursor: pointer; }
+        
+        /* Hover effect on the whole card */
+        .card-link:hover .track-card { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(255,85,0,0.1); }
         
         .artwork { width: 100%; aspect-ratio: 1/1; border-radius: 8px; object-fit: cover; margin-bottom: 15px; border: 1px solid #1a1a1a; }
         
         h3 { margin: 10px 0 5px 0; text-transform: uppercase; letter-spacing: 2px; font-size: 1.1rem; }
         .artist { color: #666; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 20px; display: block; }
         
-        .dl-btn { display: inline-block; padding: 12px 25px; background: transparent; border: 1px solid var(--accent); color: var(--accent); text-decoration: none; border-radius: 30px; font-size: 11px; font-weight: bold; text-transform: uppercase; transition: all 0.3s ease; }
-        .dl-btn:hover { background: var(--accent); color: #fff; box-shadow: 0 0 20px rgba(255,85,0,0.4); }
+        /* The button now acts as a visual cue since the whole card is clickable */
+        .dl-btn { display: inline-block; padding: 12px 25px; background: transparent; border: 1px solid var(--accent); color: var(--accent); border-radius: 30px; font-size: 11px; font-weight: bold; text-transform: uppercase; transition: all 0.3s ease; }
+        .card-link:hover .dl-btn { background: var(--accent); color: #fff; }
     </style>
 </head>
 <body>
@@ -49,19 +46,23 @@
     <p>FREE DOWNLOADS & EXCLUSIVES</p>
 
     <div class="grid">
-        <div class="track-card">
-            <img src="https://i1.sndcdn.com/artworks-JGxvC0RKvlMFJsWo-9FdMrw-t1080x1080.jpg" class="artwork">
-            <h3>Samuel Moriero Edit</h3>
-            <span class="artist">Industrial Edit</span>
-            <a href="/samuelmoriero-likeme-edit/" class="dl-btn">Unlock Download</a>
-        </div>
+        <a href="/samuelmoriero-likeme-edit/" class="card-link">
+            <div class="track-card">
+                <img src="https://i1.sndcdn.com/artworks-JGxvC0RKvlMFJsWo-9FdMrw-t1080x1080.jpg" class="artwork">
+                <h3>Samuel Moriero Edit</h3>
+                <span class="artist">Industrial Edit</span>
+                <div class="dl-btn">Unlock Download</div>
+            </div>
+        </a>
 
-        <div class="track-card">
-            <img src="https://i1.sndcdn.com/artworks-cjZOWSbn0TygOyym-bTcrKw-t1080x1080.png" class="artwork">
-            <h3>HIT 'EM</h3>
-            <span class="artist">Original Mix</span>
-            <a href="/nathn-hit-em/" class="dl-btn">Unlock Download</a>
-        </div>
+        <a href="/nathn-hit-em/" class="card-link">
+            <div class="track-card">
+                <img src="https://i1.sndcdn.com/artworks-cjZOWSbn0TygOyym-bTcrKw-t1080x1080.png" class="artwork">
+                <h3>HIT 'EM</h3>
+                <span class="artist">Original Mix</span>
+                <div class="dl-btn">Unlock Download</div>
+            </div>
+        </a>
     </div>
 
 </body>
