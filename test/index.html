@@ -108,6 +108,7 @@
 <script>
     const CONFIG = {
         clientId: "5ChG6y33NgVn7MfiTrHOUoo35Dz1XDLf",
+        clientSecret: "byvbwYQR6rq0Fqbr0aGukJflKUGdojBo",
         redirectUri: "https://poolmedia.nl",
         myUserId: "279262234", 
         trackId: "2101976640",
@@ -115,35 +116,88 @@
         pipedreamUrl: "https://eoobcjspcppb2jy.m.pipedream.net"
     };
 
-    function startConnect() {
-        const authUrl = `https://secure.soundcloud.com/authorize?client_id=${CONFIG.clientId}&redirect_uri=${CONFIG.redirectUri}&response_type=token&scope=non-expiring&display=popup`;
-        const win = window.open(authUrl, "SoundCloudAuth", "width=450,height=600");
-        const btn = document.getElementById('btn-1');
-        btn.innerText = "AUTHENTICATING...";
+    // PKCE Helper Functions
+    function generateRandomString(length) {
+        const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let text = '';
+        for (let i = 0; i < length; i++) {
+            text += possible.charAt(Math.floor(Math.random() * possible.length));
+        }
+        return text;
+    }
 
-        const timer = setInterval(() => {
+    async function generateCodeChallenge(codeVerifier) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(codeVerifier);
+        const digest = await window.crypto.subtle.digest('SHA-256', data);
+        return btoa(String.fromCharCode.apply(null, new Uint8Array(digest)))
+            .replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+    }
+
+    async function startConnect() {
+        const verifier = generateRandomString(64);
+        const challenge = await generateCodeChallenge(verifier);
+        sessionStorage.setItem('sc_verifier', verifier);
+
+        const authUrl = `https://secure.soundcloud.com/authorize?` + 
+            `client_id=${CONFIG.clientId}&` +
+            `redirect_uri=${encodeURIComponent(CONFIG.redirectUri)}&` +
+            `response_type=code&` +
+            `code_challenge=${challenge}&` +
+            `code_challenge_method=S256&` +
+            `scope=non-expiring&` +
+            `display=popup`;
+
+        const win = window.open(authUrl, "SCAuth", "width=450,height=600");
+        document.getElementById('btn-1').innerText = "CONNECTING...";
+
+        const checkWin = setInterval(() => {
             try {
-                if (win.location.href.includes("access_token")) {
-                    const hash = win.location.hash;
-                    const token = new URLSearchParams(hash.replace("#", "?")).get("access_token");
+                if (win.location.search.includes("code=")) {
+                    const code = new URLSearchParams(win.location.search).get("code");
                     win.close();
-                    clearInterval(timer);
-                    autoFollow(token);
+                    clearInterval(checkWin);
+                    exchangeCode(code);
                 }
-            } catch (e) { /* Waiting for redirect */ }
-            if (win.closed) clearInterval(timer);
+            } catch (e) { /* Cross-origin waiting */ }
+            if (win.closed) clearInterval(checkWin);
         }, 1000);
     }
 
+    async function exchangeCode(code) {
+        const verifier = sessionStorage.getItem('sc_verifier');
+        const params = new URLSearchParams();
+        params.append('grant_type', 'authorization_code');
+        params.append('client_id', CONFIG.clientId);
+        params.append('client_secret', CONFIG.clientSecret);
+        params.append('redirect_uri', CONFIG.redirectUri);
+        params.append('code_verifier', verifier);
+        params.append('code', code);
+
+        try {
+            const response = await fetch('https://secure.soundcloud.com/oauth/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: params
+            });
+            const data = await response.json();
+            if (data.access_token) {
+                autoFollow(data.access_token);
+            } else {
+                console.error("Token error:", data);
+                done(1); // Fail gracefully to allow user through
+            }
+        } catch (err) {
+            console.error("Exchange error:", err);
+            done(1);
+        }
+    }
+
     async function autoFollow(token) {
-        // Attempting auto-follow via API
         fetch(`https://api.soundcloud.com/me/followings/${CONFIG.myUserId}`, {
             method: 'PUT',
             headers: { 'Authorization': `OAuth ${token}` }
-        }).finally(() => {
-            // Even if PUT fails (Read Only), we progress the user because they "Connected"
-            done(1);
-        });
+        }).finally(() => done(1));
     }
 
     function done(n) {
