@@ -10,10 +10,8 @@
         
         .container { width: 90%; max-width: 420px; background: var(--card); padding: 40px 40px 40px 30px; border-radius: 16px; border: 1px solid var(--grey); box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center; position: relative; }
         
-        /* Top Artwork Styling */
-        .top-artwork { width: 60%; aspect-ratio: 1/1; border-radius: 12px; object-fit: cover; margin-bottom: 25px; border: 1px solid var(--grey); }
+        .top-artwork { width: 100%; aspect-ratio: 1/1; border-radius: 12px; object-fit: cover; margin-bottom: 25px; border: 1px solid var(--grey); }
 
-        /* Badge Styling */
         .promo-badge {
             background: var(--accent);
             color: #fff;
@@ -36,7 +34,10 @@
         }
 
         h1 { font-size: 1.8rem; letter-spacing: 4px; text-transform: uppercase; margin: 0; }
-        .track-sub { color: #666; font-size: 0.8rem; margin-bottom: 40px; text-transform: uppercase; }
+        .track-sub { color: #666; font-size: 0.8rem; margin-bottom: 10px; text-transform: uppercase; }
+        
+        /* New Instruction Styling */
+        .support-text { color: #aaa; font-size: 11px; margin-bottom: 40px; font-weight: 300; letter-spacing: 0.5px; }
         
         .step-row { display: flex; align-items: flex-start; margin-bottom: 30px; position: relative; text-align: left; }
         .step-row:not(:last-child)::after { content: ''; position: absolute; left: 19px; top: 40px; width: 2px; height: calc(100% - 10px); background: var(--grey); z-index: 1; }
@@ -53,7 +54,6 @@
         
         #msg { font-size: 11px; color: var(--accent); margin-top: 10px; font-weight: bold; display: none; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* Bottom Player Styling */
         .bottom-player { width: 100%; border-radius: 12px; overflow: hidden; margin-top: 40px; border: 1px solid var(--grey); background: #000; height: 120px; }
     </style>
 </head>
@@ -61,9 +61,12 @@
 
 <div class="container">
     <img src="https://i1.sndcdn.com/artworks-cjZOWSbn0TygOyym-bTcrKw-t1080x1080.png" class="top-artwork" alt="Track Artwork">
+
     <div class="promo-badge">Free Download for a Limited Time</div>
     <h1>NATHN</h1>
     <div class="track-sub">HIT 'EM</div>
+    <div class="support-text">Please support the artist to unlock your download</div>
+
     <div class="step-row active" id="s1">
         <div class="icon">1</div>
         <div style="flex:1"><a href="https://soundcloud.com/nathn-techno" target="_blank" class="btn" id="btn-1" onclick="done(1)">Follow on SoundCloud</a></div>
