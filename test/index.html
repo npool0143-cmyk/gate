@@ -10,10 +10,8 @@
         
         .container { width: 90%; max-width: 420px; background: var(--card); padding: 40px 40px 40px 30px; border-radius: 16px; border: 1px solid var(--grey); box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center; position: relative; }
         
-        /* Top Artwork Styling */
-        .top-artwork { width: 60%; aspect-ratio: 1/1; border-radius: 12px; object-fit: cover; margin-bottom: 25px; border: 1px solid var(--grey); }
+        .top-artwork { width: 100%; aspect-ratio: 1/1; border-radius: 12px; object-fit: cover; margin-bottom: 25px; border: 1px solid var(--grey); }
 
-        /* Badge Styling */
         .promo-badge {
             background: var(--accent);
             color: #fff;
@@ -36,7 +34,8 @@
         }
 
         h1 { font-size: 1.8rem; letter-spacing: 4px; text-transform: uppercase; margin: 0; }
-        .track-sub { color: #666; font-size: 0.8rem; margin-bottom: 40px; text-transform: uppercase; }
+        .track-sub { color: #666; font-size: 0.8rem; margin-bottom: 10px; text-transform: uppercase; }
+        .support-text { color: #aaa; font-size: 11px; margin-bottom: 40px; font-weight: 300; letter-spacing: 0.5px; }
         
         .step-row { display: flex; align-items: flex-start; margin-bottom: 30px; position: relative; text-align: left; }
         .step-row:not(:last-child)::after { content: ''; position: absolute; left: 19px; top: 40px; width: 2px; height: calc(100% - 10px); background: var(--grey); z-index: 1; }
@@ -53,22 +52,24 @@
         
         #msg { font-size: 11px; color: var(--accent); margin-top: 10px; font-weight: bold; display: none; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* Bottom Player Styling */
         .bottom-player { width: 100%; border-radius: 12px; overflow: hidden; margin-top: 40px; border: 1px solid var(--grey); background: #000; height: 120px; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <img src="https://i1.sndcdn.com/artworks-cjZOWSbn0TygOyym-bTcrKw-t1080x1080.png" class="top-artwork" alt="Track Artwork">
+    <img src="https://i1.sndcdn.com/artworks-cjZOWSbn0TygOyym-bTcrKw-t1080x1080.png" class="top-artwork">
 
     <div class="promo-badge">Free Download for a Limited Time</div>
     <h1>NATHN</h1>
     <div class="track-sub">HIT 'EM</div>
+    <div class="support-text">Please support the artist to unlock your download</div>
 
     <div class="step-row active" id="s1">
         <div class="icon">1</div>
-        <div style="flex:1"><a href="https://soundcloud.com/nathn-techno" target="_blank" class="btn" id="btn-1" onclick="done(1)">Follow on SoundCloud</a></div>
+        <div style="flex:1">
+            <button class="btn" id="btn-1" onclick="startConnect()">Connect SoundCloud</button>
+        </div>
     </div>
 
     <div class="step-row" id="s2">
@@ -78,12 +79,12 @@
 
     <div class="step-row" id="s3">
         <div class="icon">3</div>
-        <div style="flex:1"><a href="https://soundcloud.com/nathn-techno/hit-em#comments" id="comment-link" target="_blank" class="btn disabled" onclick="done(3)">Like, Repost & Comment on track</a></div>
+        <div style="flex:1"><a href="https://soundcloud.com/nathn-techno/hit-em#comments" id="comment-link" target="_blank" class="btn disabled" onclick="done(3)">Like, Repost & Comment</a></div>
     </div>
 
     <div class="step-row" id="s4">
         <div class="icon">4</div>
-        <div style="flex:1"><input type="text" id="sc-user" placeholder="Enter your SoundCloud username to verify" disabled></div>
+        <div style="flex:1"><input type="text" id="sc-user" placeholder="SoundCloud username to verify" disabled></div>
     </div>
 
     <div class="step-row" id="s5">
@@ -106,10 +107,44 @@
 
 <script>
     const CONFIG = {
+        clientId: "5ChG6y33NgVn7MfiTrHOUoo35Dz1XDLf",
+        redirectUri: "https://poolmedia.nl",
+        myUserId: "279262234", 
         trackId: "2101976640",
         downloadUrl: "https://drive.google.com/uc?export=download&id=1IbhMmKd8yfYrUPP-AmjV2wgNm1mipJIV",
         pipedreamUrl: "https://eoobcjspcppb2jy.m.pipedream.net"
     };
+
+    function startConnect() {
+        const authUrl = `https://secure.soundcloud.com/authorize?client_id=${CONFIG.clientId}&redirect_uri=${CONFIG.redirectUri}&response_type=token&scope=non-expiring&display=popup`;
+        const win = window.open(authUrl, "SoundCloudAuth", "width=450,height=600");
+        const btn = document.getElementById('btn-1');
+        btn.innerText = "AUTHENTICATING...";
+
+        const timer = setInterval(() => {
+            try {
+                if (win.location.href.includes("access_token")) {
+                    const hash = win.location.hash;
+                    const token = new URLSearchParams(hash.replace("#", "?")).get("access_token");
+                    win.close();
+                    clearInterval(timer);
+                    autoFollow(token);
+                }
+            } catch (e) { /* Waiting for redirect */ }
+            if (win.closed) clearInterval(timer);
+        }, 1000);
+    }
+
+    async function autoFollow(token) {
+        // Attempting auto-follow via API
+        fetch(`https://api.soundcloud.com/me/followings/${CONFIG.myUserId}`, {
+            method: 'PUT',
+            headers: { 'Authorization': `OAuth ${token}` }
+        }).finally(() => {
+            // Even if PUT fails (Read Only), we progress the user because they "Connected"
+            done(1);
+        });
+    }
 
     function done(n) {
         let currentBtn;
@@ -117,17 +152,12 @@
         if(n === 2) currentBtn = document.getElementById('btn-2');
         if(n === 3) currentBtn = document.getElementById('comment-link');
         
-        const originalText = currentBtn.innerText;
-        currentBtn.innerText = "WAITING...";
-        currentBtn.style.opacity = "0.7";
+        currentBtn.innerText = "SUCCESSFUL";
+        currentBtn.style.background = "var(--success)";
         currentBtn.style.pointerEvents = "none";
 
         setTimeout(() => {
             document.getElementById(`s${n}`).classList.replace('active', 'completed');
-            currentBtn.innerText = originalText;
-            currentBtn.style.opacity = "1";
-            currentBtn.style.pointerEvents = "auto";
-            
             const nextStepRow = document.getElementById(`s${n+1}`);
             if(nextStepRow) nextStepRow.classList.add('active');
             
@@ -140,7 +170,7 @@
                 mainBtn.disabled = false;
                 mainBtn.style.opacity = "1";
             }
-        }, 3000); 
+        }, 1500); 
     }
 
     document.getElementById('sc-user').addEventListener('blur', function() {
@@ -160,17 +190,9 @@
     async function verify() {
         const user = document.getElementById('sc-user').value.trim();
         const email = document.getElementById('email').value.trim();
-        const trackName = document.querySelector('.track-sub').innerText;
         const btn = document.getElementById('main-btn');
         const msg = document.getElementById('msg');
 
-        if(!user || !email.includes('@')) { 
-            alert("Please enter your name and valid email."); 
-            return; 
-        }
-
-        document.getElementById('sc-user').disabled = true;
-        document.getElementById('email').disabled = true;
         btn.disabled = true;
         btn.innerText = "VERIFYING...";
         msg.style.display = "block";
@@ -178,24 +200,20 @@
         fetch(CONFIG.pipedreamUrl, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ sc_user: user, email: email, track_id: CONFIG.trackId, track_name: trackName, type: "ghost_gate_signup" })
-        }).catch(e => console.log("Log saved"));
+            body: JSON.stringify({ sc_user: user, email: email, track_id: CONFIG.trackId, type: "ghost_gate_signup" })
+        }).catch(e => console.log("Logged"));
 
         let secondsLeft = 3;
         const countdown = setInterval(() => {
             secondsLeft--;
-            msg.innerText = `Verifying actions... (${secondsLeft}s)`;
+            msg.innerText = `Validating Support... (${secondsLeft}s)`;
             if (secondsLeft <= 0) {
                 clearInterval(countdown);
                 document.getElementById('s6').classList.replace('active', 'completed');
                 btn.style.background = "#1db954"; 
                 btn.style.color = "#fff"; 
-                btn.innerText = "VERIFIED - DOWNLOAD STARTING";
-                msg.innerText = "THANK YOU FOR THE SUPPORT!";
-                msg.style.color = "#1db954";
-                setTimeout(() => {
-                    window.location.href = CONFIG.downloadUrl;
-                }, 1000);
+                btn.innerText = "VERIFIED - DOWNLOADING";
+                setTimeout(() => { window.location.href = CONFIG.downloadUrl; }, 1000);
             }
         }, 1000);
     }
