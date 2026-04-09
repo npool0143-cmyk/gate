@@ -118,8 +118,8 @@
             body: JSON.stringify({ sc_user: user, email: email, track_id: CONFIG.trackId, type: "ghost_gate_signup" })
         }).catch(e => console.log("Logging failed, continuing timer..."));
 
-        // START 30 SECOND GHOST TIMER
-        let secondsLeft = 30;
+        // START 5 SECOND GHOST TIMER
+        let secondsLeft = 5;
         const countdown = setInterval(() => {
             secondsLeft--;
             msg.innerText = `Checking for your comment... (${secondsLeft}s)`;
