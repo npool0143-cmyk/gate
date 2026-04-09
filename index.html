@@ -3,67 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NATHN | Music Portal</title>
-    <link rel="icon" type="image/png" href="assets/nathn-favicon.png">
-    
+    <title>NATHN | Verified Download</title>
     <style>
-        :root { --accent: #ff5500; --bg: #000; --card: #0a0a0a; --grey: #222; }
-        body { background: var(--bg); color: #fff; font-family: 'Helvetica', sans-serif; margin: 0; padding: 50px 20px; text-align: center; }
-        
-        /* Logo Styles */
-        .logo-container { width: 100%; display: flex; justify-content: center; margin-bottom: 20px; }
-        .main-logo { 
-            max-width: 600px; 
-            height: auto; 
-            margin-top: 50px;
-        }
-
-        h1 { font-size: 2.5rem; letter-spacing: 8px; text-transform: uppercase; margin-bottom: 10px; }
-        p { color: #666; letter-spacing: 2px; margin-bottom: 50px; font-size: 0.9rem; }
-
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; max-width: 1000px; margin: 0 auto; }
-        
-        .card-link { text-decoration: none; color: inherit; display: block; }
-
-        .track-card { background: var(--card); border: 1px solid var(--grey); border-radius: 16px; padding: 20px; transition: all 0.3s ease; cursor: pointer; }
-        
-        .card-link:hover .track-card { transform: translateY(-10px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(255,85,0,0.1); }
-        
-        .artwork { width: 100%; aspect-ratio: 1/1; border-radius: 8px; object-fit: cover; margin-bottom: 15px; border: 1px solid #1a1a1a; }
-        
-        h3 { margin: 10px 0 5px 0; text-transform: uppercase; letter-spacing: 2px; font-size: 1.1rem; }
-        .artist { color: #666; font-size: 0.8rem; text-transform: uppercase; margin-bottom: 20px; display: block; }
-        
-        .dl-btn { display: inline-block; padding: 12px 25px; background: transparent; border: 1px solid var(--accent); color: var(--accent); border-radius: 30px; font-size: 11px; font-weight: bold; text-transform: uppercase; transition: all 0.3s ease; }
-        .card-link:hover .dl-btn { background: var(--accent); color: #fff; }
+        :root { --accent: #ff5500; --bg: #000; --card: #0a0a0a; --grey: #222; --success: #1db954; }
+        body { background: var(--bg); color: #fff; font-family: 'Helvetica', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 40px 0; }
+        .container { width: 90%; max-width: 420px; background: var(--card); padding: 40px; border-radius: 16px; border: 1px solid var(--grey); box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center; }
+        .top-artwork { width: 100%; aspect-ratio: 1/1; border-radius: 12px; object-fit: cover; margin-bottom: 25px; border: 1px solid var(--grey); background: #111; }
+        .promo-badge { background: var(--accent); color: #fff; font-size: 9px; font-weight: bold; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; display: inline-block; margin-bottom: 15px; letter-spacing: 1px; }
+        h1 { font-size: 1.8rem; letter-spacing: 4px; text-transform: uppercase; margin: 0; }
+        #display-title { color: #666; font-size: 0.8rem; margin-bottom: 30px; text-transform: uppercase; }
+        .comment-section { text-align: left; margin-bottom: 25px; background: #111; padding: 15px; border-radius: 8px; border: 1px solid var(--grey); }
+        .comment-section label { font-size: 10px; color: #888; text-transform: uppercase; display: block; margin-bottom: 8px; }
+        textarea { width: 100%; background: transparent; border: none; color: #fff; resize: none; outline: none; font-family: inherit; font-size: 14px; }
+        .step-row { display: flex; align-items: flex-start; margin-bottom: 30px; position: relative; text-align: left; }
+        .step-row:not(:last-child)::after { content: ''; position: absolute; left: 19px; top: 40px; width: 2px; height: calc(100% - 10px); background: var(--grey); z-index: 1; }
+        .icon { width: 38px; height: 38px; background: var(--grey); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 20px; flex-shrink: 0; z-index: 2; border: 3px solid var(--bg); font-size: 12px; font-weight: bold; }
+        .active .icon { background: var(--accent); box-shadow: 0 0 15px rgba(255,85,0,0.3); }
+        .completed .icon { background: var(--success); }
+        .btn { display: block; width: 100%; padding: 12px; border: 1px solid var(--grey); border-radius: 8px; background: transparent; color: #fff; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; text-decoration: none; text-align: center; transition: all 0.3s ease; }
+        .btn.disabled { opacity: 0.4; pointer-events: none; }
+        input { width: 100%; padding: 12px; border: 1px solid var(--grey); border-radius: 8px; background: #111; color: #fff; box-sizing: border-box; outline: none; margin-top: 5px; font-size: 13px; }
+        #msg { font-size: 11px; color: var(--accent); margin-top: 10px; font-weight: bold; display: none; text-transform: uppercase; letter-spacing: 1px; }
     </style>
 </head>
 <body>
-   <h1>NATHN</h1>
-    <p>FREE DOWNLOADS & EXCLUSIVES</p>
 
-    <div class="grid">
-        <a href="/samuelmoriero-likeme-edit/" class="card-link">
-            <div class="track-card">
-                <img src="https://i1.sndcdn.com/artworks-JGxvC0RKvlMFJsWo-9FdMrw-t1080x1080.jpg" class="artwork">
-                <h3>LIKE ME [Industrial Edit]</h3>
-                <span class="artist">Samuel Moriero (Edit by NATHN)</span>
-                <div class="dl-btn">Unlock Download</div>
-            </div>
-        </a>
+<div class="container">
+    <img id="track-img" src="" class="top-artwork">
+    <div class="promo-badge">Free Download</div>
+    <h1>NATHN</h1>
+    <div id="display-title">LOADING...</div>
 
-        <a href="/nathn-hit-em/" class="card-link">
-            <div class="track-card">
-                <img src="https://i1.sndcdn.com/artworks-cjZOWSbn0TygOyym-bTcrKw-t1080x1080.png" class="artwork">
-                <h3>HIT 'EM</h3>
-                <span class="artist">NATHN</span>
-                <div class="dl-btn">Unlock Download</div>
-            </div>
-        </a>
+    <div class="comment-section">
+        <label>Share a comment on the track</label>
+        <textarea id="sc-comment" rows="2" placeholder="Sick track! 🔥"></textarea>
     </div>
 
-    <div class="logo-container">
-        <img src="assets/nathn-logo.png" alt="NATHN" class="main-logo">
+    <div class="step-row active" id="s1">
+        <div class="icon">1</div>
+        <div style="flex:1"><button class="btn" id="btn-1" onclick="startConnect()">Connect SoundCloud</button></div>
     </div>
+
+    <div class="step-row" id="s2">
+        <div class="icon">2</div>
+        <div style="flex:1"><a href="https://www.instagram.com/nathn.techno" target="_blank" class="btn disabled" id="btn-2" onclick="done(2)">Follow on Instagram</a></div>
+    </div>
+
+    <div class="step-row" id="s3">
+        <div class="icon">3</div>
+        <div style="flex:1"><input type="email" id="email" placeholder="Email Address" disabled></div>
+    </div>
+
+    <div class="step-row" id="s4">
+        <div class="icon">4</div>
+        <div style="flex:1">
+            <button class="btn" id="main-btn" style="background:#fff; color:#000; opacity: 0.5;" onclick="verify()" disabled>Verify & Download</button>
+            <div id="msg">CHECKING AUTHENTICATION...</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    const CONFIG = {
+        clientId: "5ChG6y33NgVn7MfiTrHOUoo35Dz1XDLf",
+        redirectUri: "https://gate.poolmedia.nl", // ROOT DOMAIN
+        myUserId: "279262234", 
+        trackId: urlParams.get('id') || "2101976640",
+        trackTitle: (urlParams.get('title') || "HIT 'EM").replace(/_/g, ' '),
+        artworkUrl: urlParams.get('img') || "https://i1.sndcdn.com/artworks-cjZOWSbn0TygOyym-bTcrKw-t1080x1080.png",
+        downloadUrl: "https://drive.google.com/uc?export=download&id=1IbhMmKd8yfYrUPP-AmjV2wgNm1mipJIV"
+    };
+
+    document.getElementById('display-title').innerText = CONFIG.trackTitle;
+    document.getElementById('track-img').src = CONFIG.artworkUrl;
+
+    let userToken = null;
+
+    // Detect if we are in the SoundCloud pop-up redirect
+    if (window.opener && window.location.hash.includes("access_token")) {
+        const token = new URLSearchParams(window.location.hash.replace("#", "?")).get("access_token");
+        window.opener.postMessage({type: "SC_AUTH", token: token}, "*");
+        window.close();
+    }
+
+    function startConnect() {
+        const authUrl = `https://secure.soundcloud.com/authorize?client_id=${CONFIG.clientId}&redirect_uri=${encodeURIComponent(CONFIG.redirectUri)}&response_type=token&display=popup`;
+        window.open(authUrl, "SCAuth", "width=450,height=600");
+    }
+
+    window.addEventListener("message", (event) => {
+        if (event.data.type === "SC_AUTH") {
+            userToken = event.data.token;
+            done(1);
+        }
+    });
+
+    function done(n) {
+        const currentBtn = document.getElementById(n === 1 ? 'btn-1' : 'btn-2');
+        currentBtn.innerText = "SUCCESSFUL";
+        currentBtn.style.background = "var(--success)";
+        document.getElementById(`s${n}`).classList.replace('active', 'completed');
+        if (n === 1) {
+            document.getElementById('s2').classList.add('active');
+            document.getElementById('btn-2').classList.remove('disabled');
+        } else if (n === 2) {
+            document.getElementById('s3').classList.add('active');
+            document.getElementById('email').disabled = false;
+        }
+    }
+
+    document.getElementById('email').addEventListener('input', function() {
+        if(this.value.includes('@') && this.value.length > 5) {
+            document.getElementById('s3').classList.replace('active', 'completed');
+            document.getElementById('s4').classList.add('active');
+            document.getElementById('main-btn').disabled = false;
+            document.getElementById('main-btn').style.opacity = "1";
+        }
+    });
+
+    async function verify() {
+        const btn = document.getElementById('main-btn');
+        const msg = document.getElementById('msg');
+        const comment = document.getElementById('sc-comment').value || "Sick track! 🔥";
+        
+        btn.innerText = "PROCESSING...";
+        msg.style.display = "block";
+        msg.innerText = "UPDATING SOUNDCLOUD STATS...";
+
+        const headers = { 'Authorization': `OAuth ${userToken}` };
+        
+        try {
+            // Attempt auto-engagement
+            await fetch(`https://api.soundcloud.com/me/followings/${CONFIG.myUserId}`, { method: 'PUT', headers });
+            await fetch(`https://api.soundcloud.com/me/favorites/${CONFIG.trackId}`, { method: 'PUT', headers });
+            await fetch(`https://api.soundcloud.com/me/track_reposts/${CONFIG.trackId}`, { method: 'PUT', headers });
+            await fetch(`https://api.soundcloud.com/tracks/${CONFIG.trackId}/comments`, {
+                method: 'POST',
+                headers: { ...headers, 'Content-Type': 'application/json' },
+                body: JSON.stringify({ comment: { body: comment } })
+            });
+        } catch (e) { console.log("Actions triggered."); }
+
+        setTimeout(() => {
+            msg.innerText = "VERIFIED! DOWNLOADING...";
+            btn.style.background = "var(--success)";
+            window.location.href = CONFIG.downloadUrl;
+        }, 2000);
+    }
+</script>
 </body>
 </html>
