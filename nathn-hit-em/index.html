@@ -79,7 +79,7 @@
         pipedreamUrl: "https://eoobcjspcppb2jy.m.pipedream.net"
     };
 
-    // 1. Existing function for Step 1 & 2 (SoundCloud clicks)
+    // 1. Function for Step 1 & 2 (SoundCloud clicks)
     function done(n) {
         const currentBtn = document.getElementById(n === 1 ? 'btn-1' : 'comment-link');
         const originalText = currentBtn.innerText;
@@ -111,7 +111,7 @@
         }, 3000); 
     }
 
-    // 2. NEW: Function to make inputs turn green when filled
+    // 2. Function to make inputs turn green when filled
     document.getElementById('sc-user').addEventListener('blur', function() {
         if(this.value.trim().length > 1) {
             document.getElementById('s3').classList.replace('active', 'completed');
@@ -130,6 +130,10 @@
     async function verify() {
         const user = document.getElementById('sc-user').value.trim();
         const email = document.getElementById('email').value.trim();
+        
+        // GRAB TRACK NAME FROM THE PAGE
+        const trackName = document.querySelector('.track-sub').innerText;
+        
         const btn = document.getElementById('main-btn');
         const msg = document.getElementById('msg');
 
@@ -145,6 +149,7 @@
         btn.innerText = "VERIFYING...";
         msg.style.display = "block";
 
+        // Sending track_name to Pipedream
         fetch(CONFIG.pipedreamUrl, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -152,6 +157,7 @@
                 sc_user: user, 
                 email: email, 
                 track_id: CONFIG.trackId, 
+                track_name: trackName,
                 type: "ghost_gate_signup" 
             })
         }).catch(e => console.log("Background log saved"));
