@@ -23,13 +23,12 @@
         
         .btn { display: block; width: 100%; padding: 12px; border: 1px solid var(--grey); border-radius: 8px; background: transparent; color: #fff; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; text-decoration: none; text-align: center; transition: all 0.3s ease; }
         
-        /* Added disabled state for links/buttons */
         .btn.disabled { opacity: 0.5; pointer-events: none; cursor: not-allowed; }
         
         input { width: 100%; padding: 12px; border: 1px solid var(--grey); border-radius: 8px; background: #111; color: #fff; box-sizing: border-box; outline: none; margin-top: 5px; font-size: 13px; transition: opacity 0.3s ease; }
         input:disabled { opacity: 0.3; cursor: not-allowed; }
         
-        #msg { font-size: 10px; color: var(--accent); margin-top: 8px; font-weight: bold; display: none; }
+        #msg { font-size: 11px; color: var(--accent); margin-top: 10px; font-weight: bold; display: none; text-transform: uppercase; letter-spacing: 1px; }
     </style>
 </head>
 <body>
@@ -71,26 +70,19 @@
 <script>
     const CONFIG = {
         trackId: "2281994480",
-        commentUrl: "https://soundcloud.com/nathn-techno/samuel-moriero-industrial-edit#comments",
-        artwork: "https://i1.sndcdn.com/artworks-JGxvC0RKvlMFJsWo-9FdMrw-t1080x1080.jpg",
-        title: "Samuel Moriero [Industrial Edit]"
+        downloadUrl: "https://drive.google.com/uc?export=download&id=1B84myAr_qAh67_3qNQAMDEuFMlbW-UpP",
+        pipedreamUrl: "https://eoobcjspcppb2jy.m.pipedream.net"
     };
 
     function done(n) {
-        // Mark current step as completed
         document.getElementById(`s${n}`).classList.replace('active', 'completed');
-        
-        // Find and activate next step row
         const nextStepRow = document.getElementById(`s${n+1}`);
         if(nextStepRow) nextStepRow.classList.add('active');
 
-        // Logic for unlocking Step 2 after Step 1 is done
         if(n === 1) {
-            const step2Btn = document.getElementById('comment-link');
-            step2Btn.classList.remove('disabled');
+            document.getElementById('comment-link').classList.remove('disabled');
         }
 
-        // Logic for unlocking inputs after Step 2 is done
         if(n === 2) {
             document.getElementById('sc-user').disabled = false;
             document.getElementById('email').disabled = false;
@@ -101,39 +93,53 @@
     }
 
     async function verify() {
-        const user = document.getElementById('sc-user').value;
-        const email = document.getElementById('email').value;
+        const user = document.getElementById('sc-user').value.trim();
+        const email = document.getElementById('email').value.trim();
         const btn = document.getElementById('main-btn');
         const msg = document.getElementById('msg');
 
         if(!user || !email.includes('@')) { 
-            alert("Please enter your username and email."); 
+            alert("Please enter your SoundCloud username and valid email."); 
             return; 
         }
 
+        // Lock inputs
+        document.getElementById('sc-user').disabled = true;
+        document.getElementById('email').disabled = true;
+        
+        btn.disabled = true;
         btn.innerText = "VERIFYING...";
         msg.style.display = "block";
 
-        try {
-            const res = await fetch('https://eoobcjspcppb2jy.m.pipedream.net', {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ sc_user: user, email: email, track_id: CONFIG.trackId })
-            });
-            const data = await res.json();
+        // Log to Pipedream for your mailing list (does not wait for response)
+        fetch(CONFIG.pipedreamUrl, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ sc_user: user, email: email, track_id: CONFIG.trackId, type: "ghost_gate_signup" })
+        }).catch(e => console.log("Logging failed, continuing timer..."));
 
-            if(data.verified) {
+        // START 30 SECOND GHOST TIMER
+        let secondsLeft = 30;
+        const countdown = setInterval(() => {
+            secondsLeft--;
+            msg.innerText = `Checking for your comment... (${secondsLeft}s)`;
+
+            if (secondsLeft <= 0) {
+                clearInterval(countdown);
+                
+                // Final Success State
                 btn.style.background = "#1db954"; 
                 btn.style.color = "#fff"; 
-                btn.innerText = "VERIFIED";
-                window.location.href = data.download_url;
-            } else {
-                btn.innerText = "TRY AGAIN";
-                msg.innerText = data.message || "COMMENT NOT FOUND";
+                btn.innerText = "VERIFIED - DOWNLOAD STARTING";
+                msg.innerText = "THANK YOU FOR THE SUPPORT!";
+                msg.style.color = "#1db954";
+
+                // Trigger Download
+                setTimeout(() => {
+                    window.location.href = CONFIG.downloadUrl;
+                }, 1000);
             }
-        } catch (e) { 
-            msg.innerText = "SERVER ERROR - TRY AGAIN"; 
-        }
+        }, 1000);
     }
 </script>
 </body>
