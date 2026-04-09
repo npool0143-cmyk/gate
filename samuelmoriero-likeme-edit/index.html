@@ -79,28 +79,24 @@
         pipedreamUrl: "https://eoobcjspcppb2jy.m.pipedream.net"
     };
 
+    // 1. Existing function for Step 1 & 2 (SoundCloud clicks)
     function done(n) {
-        // Find which button was clicked to give it a "Waiting" state
         const currentBtn = document.getElementById(n === 1 ? 'btn-1' : 'comment-link');
         const originalText = currentBtn.innerText;
 
-        // Change UI to look like it's processing
         currentBtn.innerText = "WAITING...";
         currentBtn.style.opacity = "0.7";
-        currentBtn.style.pointerEvents = "none"; // Prevent double clicking
+        currentBtn.style.pointerEvents = "none";
 
-        // DELAY: Wait 1.5 seconds before showing the green check
         setTimeout(() => {
             document.getElementById(`s${n}`).classList.replace('active', 'completed');
             currentBtn.innerText = originalText;
             currentBtn.style.opacity = "1";
             currentBtn.style.pointerEvents = "auto";
 
-            // Activate next row
             const nextStepRow = document.getElementById(`s${n+1}`);
             if(nextStepRow) nextStepRow.classList.add('active');
 
-            // Unlock next specific elements
             if(n === 1) {
                 document.getElementById('comment-link').classList.remove('disabled');
             }
@@ -115,19 +111,33 @@
         }, 3000); 
     }
 
+    // 2. NEW: Function to make inputs turn green when filled
+    document.getElementById('sc-user').addEventListener('blur', function() {
+        if(this.value.trim().length > 1) {
+            document.getElementById('s3').classList.replace('active', 'completed');
+            document.getElementById('s4').classList.add('active');
+        }
+    });
+
+    document.getElementById('email').addEventListener('blur', function() {
+        if(this.value.includes('@')) {
+            document.getElementById('s4').classList.replace('active', 'completed');
+            document.getElementById('s5').classList.add('active');
+        }
+    });
+
+    // 3. Final Verification Function
     async function verify() {
         const user = document.getElementById('sc-user').value.trim();
         const email = document.getElementById('email').value.trim();
         const btn = document.getElementById('main-btn');
         const msg = document.getElementById('msg');
 
-        // Simple validation
         if(!user || !email.includes('@')) { 
             alert("Please enter your name and valid email."); 
             return; 
         }
 
-        // Lock inputs to prevent changes during "verification"
         document.getElementById('sc-user').disabled = true;
         document.getElementById('email').disabled = true;
         
@@ -135,7 +145,6 @@
         btn.innerText = "VERIFYING...";
         msg.style.display = "block";
 
-        // Send data to Pipedream logger
         fetch(CONFIG.pipedreamUrl, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -147,8 +156,7 @@
             })
         }).catch(e => console.log("Background log saved"));
 
-        // FINAL 5 SECOND TIMER
-        let secondsLeft = 5;
+        let secondsLeft = 3;
         const countdown = setInterval(() => {
             secondsLeft--;
             msg.innerText = `Checking for your comment... (${secondsLeft}s)`;
@@ -156,14 +164,15 @@
             if (secondsLeft <= 0) {
                 clearInterval(countdown);
                 
-                // Success UI State
+                // Final step turns green
+                document.getElementById('s5').classList.replace('active', 'completed');
+                
                 btn.style.background = "#1db954"; 
                 btn.style.color = "#fff"; 
                 btn.innerText = "VERIFIED - DOWNLOAD STARTING";
                 msg.innerText = "THANK YOU FOR THE SUPPORT!";
                 msg.style.color = "#1db954";
 
-                // Send user to file
                 setTimeout(() => {
                     window.location.href = CONFIG.downloadUrl;
                 }, 1000);
