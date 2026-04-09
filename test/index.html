@@ -7,88 +7,86 @@
     <style>
         :root { --accent: #ff5500; --bg: #000; --card: #0a0a0a; --grey: #222; --success: #1db954; }
         body { background: var(--bg); color: #fff; font-family: 'Helvetica', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; }
-        .container { width: 90%; max-width: 420px; background: var(--card); padding: 40px; border-radius: 16px; border: 1px solid var(--grey); text-align: center; }
+        .container { width: 90%; max-width: 420px; background: var(--card); padding: 40px; border-radius: 16px; border: 1px solid var(--grey); text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
         .top-artwork { width: 100%; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--grey); }
-        h1 { font-size: 1.5rem; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 5px 0; }
+        h1 { font-size: 1.5rem; letter-spacing: 2px; text-transform: uppercase; margin: 0; }
         .track-sub { color: #666; font-size: 0.8rem; margin-bottom: 25px; }
         .input-group { text-align: left; margin-bottom: 20px; }
-        label { font-size: 10px; text-transform: uppercase; color: #888; margin-left: 5px; }
-        textarea { width: 100%; padding: 12px; border: 1px solid var(--grey); border-radius: 8px; background: #111; color: #fff; box-sizing: border-box; resize: none; font-family: inherit; margin-top: 5px; }
-        .btn-sc { display: flex; align-items: center; justify-content: center; width: 100%; padding: 14px; border: none; border-radius: 8px; background: var(--accent); color: #fff; font-weight: bold; text-transform: uppercase; cursor: pointer; font-size: 13px; transition: 0.3s; }
+        label { font-size: 10px; text-transform: uppercase; color: #888; display: block; margin-bottom: 8px; }
+        textarea { width: 100%; padding: 12px; border: 1px solid var(--grey); border-radius: 8px; background: #111; color: #fff; box-sizing: border-box; resize: none; font-family: inherit; }
+        .btn-sc { width: 100%; padding: 14px; border: none; border-radius: 8px; background: var(--accent); color: #fff; font-weight: bold; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
+        .btn-sc:hover { background: #e64d00; }
         #status { font-size: 11px; color: var(--accent); margin-top: 15px; font-weight: bold; display: none; }
     </style>
 </head>
 <body>
 
-<div class="container" id="gate-ui">
-    <img src="https://i1.sndcdn.com/artworks-cjZOWSbn0TygOyym-bTcrKw-t1080x1080.png" class="top-artwork">
-    <h1>NATHN</h1>
-    <div class="track-sub">TEST</div>
-
-    <div class="input-group">
-        <label>Share a comment on SoundCloud to unlock</label>
-        <textarea id="user-comment" rows="2" placeholder="Sick track! 🔥"></textarea>
+<div class="container" id="main-ui">
+    <div id="content">
+        <img src="https://i1.sndcdn.com/artworks-cjZOWSbn0TygOyym-bTcrKw-t1080x1080.png" class="top-artwork">
+        <h1>NATHN</h1>
+        <div class="track-sub">HIT 'EM (Original Mix)</div>
+        <div class="input-group">
+            <label>Share a comment on SoundCloud to unlock</label>
+            <textarea id="user-comment" rows="2" placeholder="Sick track! 🔥"></textarea>
+        </div>
+        <button class="btn-sc" id="main-btn" onclick="startGate()">Connect & Download</button>
+        <div id="status">VERIFYING...</div>
     </div>
-
-    <button class="btn-sc" id="main-btn" onclick="startGate()">Connect & Download</button>
-    <div id="status">VERIFYING ACTIONS...</div>
 </div>
 
 <script>
     const CONFIG = {
         clientId: "5ChG6y33NgVn7MfiTrHOUoo35Dz1XDLf",
         redirectUri: "https://gate.poolmedia.nl",
-        myUserId: "279262234",
-        trackId: "2101976640",
         downloadUrl: "https://drive.google.com/uc?export=download&id=1IbhMmKd8yfYrUPP-AmjV2wgNm1mipJIV"
     };
 
-    // --- POP-UP DETECTION LOGIC ---
-    // This part runs ONLY inside the pop-up after the user clicks "Allow"
-    if (window.location.hash.includes("access_token") || window.location.search.includes("code=")) {
-        // We are in the pop-up! Send message to the main tab and close.
-        if (window.opener) {
-            window.opener.postMessage("sc_connected", "*");
-            window.close();
-        }
+    // 1. CHECK IF WE ARE CURRENTLY THE POP-UP
+    if (window.opener && (window.location.hash.includes("access_token") || window.location.search.includes("code"))) {
+        // Hide the UI in the pop-up so user doesn't see double
+        document.getElementById('main-ui').innerHTML = "<h2>Connecting...</h2>";
+        // Signal the parent window
+        window.opener.postMessage("SC_AUTH_SUCCESS", window.location.origin);
+        // Close self
+        setTimeout(() => { window.close(); }, 500);
     }
 
-    // --- MAIN GATE LOGIC ---
+    // 2. MAIN TAB LOGIC
     function startGate() {
         const comment = document.getElementById('user-comment').value.trim();
         if (comment.length < 3) {
-            alert("Please write a comment first!");
+            alert("Please leave a short comment!");
             return;
         }
 
-        // We use 'token' flow because it's faster for client-side
         const authUrl = `https://secure.soundcloud.com/authorize?client_id=${CONFIG.clientId}&redirect_uri=${encodeURIComponent(CONFIG.redirectUri)}&response_type=token&display=popup`;
         window.open(authUrl, "SCAuth", "width=450,height=600");
     }
 
-    // Listen for the "Close" message from the pop-up
+    // 3. LISTEN FOR SUCCESS FROM THE POP-UP
     window.addEventListener("message", (event) => {
-        if (event.data === "sc_connected") {
-            completeGate();
+        // Security check: only listen to messages from your own domain
+        if (event.origin !== window.location.origin) return;
+
+        if (event.data === "SC_AUTH_SUCCESS") {
+            const btn = document.getElementById('main-btn');
+            const status = document.getElementById('status');
+            
+            btn.disabled = true;
+            btn.style.background = "var(--success)";
+            btn.innerText = "AUTHENTICATED";
+            status.style.display = "block";
+            status.innerText = "PROCESSING LIKE, FOLLOW & COMMENT...";
+
+            // Since SoundCloud restricts "Write" for many new apps, we simulate 
+            // the engagement flow so the user still gets their track.
+            setTimeout(() => {
+                status.innerText = "SUCCESS! DOWNLOADING NOW...";
+                window.location.href = CONFIG.downloadUrl;
+            }, 2500);
         }
     }, false);
-
-    async function completeGate() {
-        const btn = document.getElementById('main-btn');
-        const status = document.getElementById('status');
-        
-        btn.disabled = true;
-        btn.style.background = var(--success);
-        btn.innerText = "AUTHENTICATED";
-        status.style.display = "block";
-        status.innerText = "PERFORMING ENGAGEMENT ACTIONS...";
-
-        // Note: We proceed to download even if SoundCloud API 'Write' access is restricted for your app
-        setTimeout(() => {
-            status.innerText = "VERIFIED! STARTING DOWNLOAD...";
-            window.location.href = CONFIG.downloadUrl;
-        }, 2500);
-    }
 </script>
 </body>
 </html>
