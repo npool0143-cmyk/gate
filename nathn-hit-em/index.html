@@ -6,11 +6,14 @@
     <title>NATHN | Verified Download</title>
     <style>
         :root { --accent: #ff5500; --bg: #000; --card: #0a0a0a; --grey: #222; --success: #1db954; }
-        body { background: var(--bg); color: #fff; font-family: 'Helvetica', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px 0; }
+        body { background: var(--bg); color: #fff; font-family: 'Helvetica', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 40px 0; }
         
         .container { width: 90%; max-width: 420px; background: var(--card); padding: 40px 40px 40px 30px; border-radius: 16px; border: 1px solid var(--grey); box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center; position: relative; }
         
-        /* THE BADGE */
+        /* Top Artwork Styling */
+        .top-artwork { width: 100%; aspect-ratio: 1/1; border-radius: 12px; object-fit: cover; margin-bottom: 25px; border: 1px solid var(--grey); }
+
+        /* Badge Styling */
         .promo-badge {
             background: var(--accent);
             color: #fff;
@@ -32,9 +35,6 @@
             100% { opacity: 1; transform: scale(1); }
         }
 
-        /* Player Styling */
-        .player-container { width: 100%; border-radius: 12px; overflow: hidden; margin-bottom: 25px; border: 1px solid var(--grey); background: #000; height: 200px; }
-        
         h1 { font-size: 1.8rem; letter-spacing: 4px; text-transform: uppercase; margin: 0; }
         .track-sub { color: #666; font-size: 0.8rem; margin-bottom: 40px; text-transform: uppercase; }
         
@@ -46,18 +46,22 @@
         .completed .icon { background: var(--success); }
         
         .btn { display: block; width: 100%; padding: 12px; border: 1px solid var(--grey); border-radius: 8px; background: transparent; color: #fff; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; text-decoration: none; text-align: center; transition: all 0.3s ease; }
-        
         .btn.disabled { opacity: 0.5; pointer-events: none; cursor: not-allowed; }
         
         input { width: 100%; padding: 12px; border: 1px solid var(--grey); border-radius: 8px; background: #111; color: #fff; box-sizing: border-box; outline: none; margin-top: 5px; font-size: 13px; transition: opacity 0.3s ease; }
         input:disabled { opacity: 0.3; cursor: not-allowed; }
         
         #msg { font-size: 11px; color: var(--accent); margin-top: 10px; font-weight: bold; display: none; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* Bottom Player Styling */
+        .bottom-player { width: 100%; border-radius: 12px; overflow: hidden; margin-top: 40px; border: 1px solid var(--grey); background: #000; height: 120px; }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <img src="https://i1.sndcdn.com/artworks-cjZOWSbn0TygOyym-bTcrKw-t1080x1080.png" class="top-artwork" alt="Track Artwork">
+
     <div class="promo-badge">Free Download for a Limited Time</div>
     <h1>NATHN</h1>
     <div class="track-sub">HIT 'EM</div>
@@ -89,10 +93,12 @@
             <div id="msg">CHECKING... PLEASE WAIT</div>
         </div>
     </div>
+
+    <div class="bottom-player">
+        <iframe width="100%" height="120" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/2101976640&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true"></iframe>
+    </div>
 </div>
-<div class="player-container">
-        <iframe width="100%" height="200" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/soundcloud%253Atracks%253A2101976640&color=%23ff5500&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
-</div>
+
 <script>
     const CONFIG = {
         trackId: "2101976640",
@@ -103,7 +109,6 @@
     function done(n) {
         const currentBtn = document.getElementById(n === 1 ? 'btn-1' : 'comment-link');
         const originalText = currentBtn.innerText;
-
         currentBtn.innerText = "WAITING...";
         currentBtn.style.opacity = "0.7";
         currentBtn.style.pointerEvents = "none";
@@ -113,14 +118,9 @@
             currentBtn.innerText = originalText;
             currentBtn.style.opacity = "1";
             currentBtn.style.pointerEvents = "auto";
-
             const nextStepRow = document.getElementById(`s${n+1}`);
             if(nextStepRow) nextStepRow.classList.add('active');
-
-            if(n === 1) {
-                document.getElementById('comment-link').classList.remove('disabled');
-            }
-
+            if(n === 1) document.getElementById('comment-link').classList.remove('disabled');
             if(n === 2) {
                 document.getElementById('sc-user').disabled = false;
                 document.getElementById('email').disabled = false;
@@ -149,7 +149,6 @@
         const user = document.getElementById('sc-user').value.trim();
         const email = document.getElementById('email').value.trim();
         const trackName = document.querySelector('.track-sub').innerText;
-        
         const btn = document.getElementById('main-btn');
         const msg = document.getElementById('msg');
 
@@ -160,7 +159,6 @@
 
         document.getElementById('sc-user').disabled = true;
         document.getElementById('email').disabled = true;
-        
         btn.disabled = true;
         btn.innerText = "VERIFYING...";
         msg.style.display = "block";
@@ -168,20 +166,13 @@
         fetch(CONFIG.pipedreamUrl, {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ 
-                sc_user: user, 
-                email: email, 
-                track_id: CONFIG.trackId, 
-                track_name: trackName,
-                type: "ghost_gate_signup" 
-            })
-        }).catch(e => console.log("Background log saved"));
+            body: JSON.stringify({ sc_user: user, email: email, track_id: CONFIG.trackId, track_name: trackName, type: "ghost_gate_signup" })
+        }).catch(e => console.log("Log saved"));
 
         let secondsLeft = 3;
         const countdown = setInterval(() => {
             secondsLeft--;
             msg.innerText = `Checking for your comment... (${secondsLeft}s)`;
-
             if (secondsLeft <= 0) {
                 clearInterval(countdown);
                 document.getElementById('s5').classList.replace('active', 'completed');
@@ -190,7 +181,6 @@
                 btn.innerText = "VERIFIED - DOWNLOAD STARTING";
                 msg.innerText = "THANK YOU FOR THE SUPPORT!";
                 msg.style.color = "#1db954";
-
                 setTimeout(() => {
                     window.location.href = CONFIG.downloadUrl;
                 }, 1000);
@@ -198,6 +188,5 @@
         }, 1000);
     }
 </script>
-    
 </body>
 </html>
