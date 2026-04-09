@@ -10,10 +10,8 @@
         
         .container { width: 90%; max-width: 420px; background: var(--card); padding: 40px 40px 40px 30px; border-radius: 16px; border: 1px solid var(--grey); box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center; position: relative; }
         
-        /* Artwork at top */
         .top-artwork { width: 100%; aspect-ratio: 1/1; border-radius: 12px; object-fit: cover; margin-bottom: 25px; border: 1px solid var(--grey); }
 
-        /* FOMO Badge */
         .promo-badge {
             background: var(--accent);
             color: #fff;
@@ -53,7 +51,6 @@
         
         #msg { font-size: 11px; color: var(--accent); margin-top: 10px; font-weight: bold; display: none; text-transform: uppercase; letter-spacing: 1px; }
 
-        /* Embed at bottom */
         .bottom-player { width: 100%; border-radius: 12px; overflow: hidden; margin-top: 40px; border: 1px solid var(--grey); background: #000; height: 120px; }
     </style>
 </head>
@@ -73,21 +70,26 @@
 
     <div class="step-row" id="s2">
         <div class="icon">2</div>
-        <div style="flex:1"><a href="https://soundcloud.com/nathn-techno/samuel-moriero-industrial-edit#comments" id="comment-link" target="_blank" class="btn disabled" onclick="done(2)">Like & Comment on track</a></div>
+        <div style="flex:1"><a href="https://www.instagram.com/nathn.techno" target="_blank" class="btn disabled" id="btn-2" onclick="done(2)">Follow on Instagram</a></div>
     </div>
 
     <div class="step-row" id="s3">
         <div class="icon">3</div>
-        <div style="flex:1"><input type="text" id="sc-user" placeholder="Name" disabled></div>
+        <div style="flex:1"><a href="https://soundcloud.com/nathn-techno/samuel-moriero-industrial-edit#comments" id="comment-link" target="_blank" class="btn disabled" onclick="done(3)">Like & Comment on track</a></div>
     </div>
 
     <div class="step-row" id="s4">
         <div class="icon">4</div>
-        <div style="flex:1"><input type="email" id="email" placeholder="Email Address" disabled></div>
+        <div style="flex:1"><input type="text" id="sc-user" placeholder="Name" disabled></div>
     </div>
 
     <div class="step-row" id="s5">
         <div class="icon">5</div>
+        <div style="flex:1"><input type="email" id="email" placeholder="Email Address" disabled></div>
+    </div>
+
+    <div class="step-row" id="s6">
+        <div class="icon">6</div>
         <div style="flex:1">
             <button class="btn" id="main-btn" style="background:#fff; color:#000; opacity: 0.5;" onclick="verify()" disabled>Verify & Download</button>
             <div id="msg">CHECKING... PLEASE WAIT</div>
@@ -107,7 +109,11 @@
     };
 
     function done(n) {
-        const currentBtn = document.getElementById(n === 1 ? 'btn-1' : 'comment-link');
+        let currentBtn;
+        if(n === 1) currentBtn = document.getElementById('btn-1');
+        if(n === 2) currentBtn = document.getElementById('btn-2');
+        if(n === 3) currentBtn = document.getElementById('comment-link');
+        
         const originalText = currentBtn.innerText;
         currentBtn.innerText = "WAITING...";
         currentBtn.style.opacity = "0.7";
@@ -118,10 +124,16 @@
             currentBtn.innerText = originalText;
             currentBtn.style.opacity = "1";
             currentBtn.style.pointerEvents = "auto";
+            
             const nextStepRow = document.getElementById(`s${n+1}`);
             if(nextStepRow) nextStepRow.classList.add('active');
-            if(n === 1) document.getElementById('comment-link').classList.remove('disabled');
-            if(n === 2) {
+            
+            // Enable next buttons
+            if(n === 1) document.getElementById('btn-2').classList.remove('disabled');
+            if(n === 2) document.getElementById('comment-link').classList.remove('disabled');
+            
+            // Enable inputs when social steps are done
+            if(n === 3) {
                 document.getElementById('sc-user').disabled = false;
                 document.getElementById('email').disabled = false;
                 const mainBtn = document.getElementById('main-btn');
@@ -133,15 +145,15 @@
 
     document.getElementById('sc-user').addEventListener('blur', function() {
         if(this.value.trim().length > 1) {
-            document.getElementById('s3').classList.replace('active', 'completed');
-            document.getElementById('s4').classList.add('active');
+            document.getElementById('s4').classList.replace('active', 'completed');
+            document.getElementById('s5').classList.add('active');
         }
     });
 
     document.getElementById('email').addEventListener('blur', function() {
         if(this.value.includes('@')) {
-            document.getElementById('s4').classList.replace('active', 'completed');
-            document.getElementById('s5').classList.add('active');
+            document.getElementById('s5').classList.replace('active', 'completed');
+            document.getElementById('s6').classList.add('active');
         }
     });
 
@@ -172,10 +184,10 @@
         let secondsLeft = 3;
         const countdown = setInterval(() => {
             secondsLeft--;
-            msg.innerText = `Checking for your comment... (${secondsLeft}s)`;
+            msg.innerText = `Verifying all steps... (${secondsLeft}s)`;
             if (secondsLeft <= 0) {
                 clearInterval(countdown);
-                document.getElementById('s5').classList.replace('active', 'completed');
+                document.getElementById('s6').classList.replace('active', 'completed');
                 btn.style.background = "#1db954"; 
                 btn.style.color = "#fff"; 
                 btn.innerText = "VERIFIED - DOWNLOAD STARTING";
