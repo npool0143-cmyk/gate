@@ -31,7 +31,7 @@
 <div class="container">
     <img id="track-img" src="" class="top-artwork">
     <div class="promo-badge">Free Download</div>
-    <h1>TEST</h1>
+    <h1>NATHN</h1>
     <div id="display-title">LOADING...</div>
 
     <div class="comment-section">
@@ -64,9 +64,11 @@
 </div>
 
 <script>
-    // 1. DYNAMIC CONFIGURATION
     const urlParams = new URLSearchParams(window.location.search);
     
+    // YOUR WORKER URL
+    const WORKER_URL = "https://soundcloud-gate.npool0143.workers.dev"; 
+
     const CONFIG = {
         clientId: "5ChG6y33NgVn7MfiTrHOUoo35Dz1XDLf",
         redirectUri: "https://gate.poolmedia.nl", 
@@ -77,32 +79,26 @@
         downloadUrl: "https://drive.google.com/uc?export=download&id=" + (urlParams.get('file') || "1IbhMmKd8yfYrUPP-AmjV2wgNm1mipJIV")
     };
 
-    // Apply UI labels immediately
     document.getElementById('display-title').innerText = CONFIG.trackTitle;
     document.getElementById('track-img').src = CONFIG.artworkUrl;
 
-    let userToken = null;
+    let authCode = null;
 
-    // 2. THE POP-UP DETECTOR (THIS FIXES YOUR ISSUE)
-    // If this page is opened as a popup and has a 'code' or 'token' in the URL
-    if (window.opener && (window.location.search.includes("code=") || window.location.hash.includes("access_token"))) {
-        // Send success message to the main window
-        window.opener.postMessage({type: "SC_AUTH_SUCCESS"}, "*");
-        // Immediately stop the popup from loading further and close it
+    // Detect if this is the popup redirect
+    if (window.opener && window.location.search.includes("code=")) {
+        const code = new URLSearchParams(window.location.search).get("code");
+        window.opener.postMessage({type: "SC_CODE", code: code}, "*");
         window.close();
     }
 
-    // 3. MAIN WINDOW LOGIC
     function startConnect() {
-        // Note: Using response_type=code to match your SoundCloud App settings
         const authUrl = `https://secure.soundcloud.com/authorize?client_id=${CONFIG.clientId}&redirect_uri=${encodeURIComponent(CONFIG.redirectUri)}&response_type=code&display=popup`;
         window.open(authUrl, "SCAuth", "width=450,height=600");
-        document.getElementById('btn-1').innerText = "AUTHORIZING...";
     }
 
-    // Listen for the "Close" signal from the popup
     window.addEventListener("message", (event) => {
-        if (event.data.type === "SC_AUTH_SUCCESS") {
+        if (event.data.type === "SC_CODE") {
+            authCode = event.data.code;
             done(1);
         }
     });
@@ -112,7 +108,6 @@
         currentBtn.innerText = "SUCCESSFUL";
         currentBtn.style.background = "var(--success)";
         document.getElementById(`s${n}`).classList.replace('active', 'completed');
-        
         if (n === 1) {
             document.getElementById('s2').classList.add('active');
             document.getElementById('btn-2').classList.remove('disabled');
@@ -134,19 +129,41 @@
     async function verify() {
         const btn = document.getElementById('main-btn');
         const msg = document.getElementById('msg');
-        const comment = document.getElementById('sc-comment').value || "Sick track! 🔥";
+        const commentText = document.getElementById('sc-comment').value || "Sick track! 🔥";
         
         btn.innerText = "PROCESSING...";
         msg.style.display = "block";
-        msg.innerText = "FOLLOWING, LIKING & REPOSTING...";
+        msg.innerText = "UPDATING SOUNDCLOUD STATS...";
 
-        // Simulation of engagement (Standard for apps without 'write' approval)
+        try {
+            // Talk to your Cloudflare Worker
+            const response = await fetch(WORKER_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    code: authCode,
+                    trackId: CONFIG.trackId,
+                    comment: commentText,
+                    myUserId: CONFIG.myUserId
+                })
+            });
+
+            const result = await response.json();
+            
+            if (result.success) {
+                msg.innerText = "ALL ACTIONS COMPLETED!";
+            } else {
+                console.error("Worker error:", result.error);
+                msg.innerText = "AUTH SUCCESSFUL, STARTING DOWNLOAD...";
+            }
+        } catch (e) {
+            console.error("Fetch error:", e);
+            msg.innerText = "CONNECTION BUSY, STARTING DOWNLOAD...";
+        }
+
         setTimeout(() => {
-            msg.innerText = "VERIFIED! DOWNLOADING...";
-            btn.style.background = "var(--success)";
-            btn.innerText = "COMPLETE";
             window.location.href = CONFIG.downloadUrl;
-        }, 2500);
+        }, 2000);
     }
 </script>
 </body>
