@@ -8,7 +8,6 @@
         :root { --accent: #ff5500; --bg: #000; --card: #0a0a0a; --grey: #222; --success: #1db954; }
         body { background: var(--bg); color: #fff; font-family: 'Helvetica', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px 0; }
         
-        /* Added more padding on the right (40px) */
         .container { width: 90%; max-width: 420px; background: var(--card); padding: 40px 40px 40px 30px; border-radius: 16px; border: 1px solid var(--grey); box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center; }
         
         .artwork { width: 140px; height: 140px; border-radius: 12px; margin-bottom: 20px; border: 1px solid var(--grey); object-fit: cover; }
@@ -23,6 +22,10 @@
         .completed .icon { background: var(--success); }
         
         .btn { display: block; width: 100%; padding: 12px; border: 1px solid var(--grey); border-radius: 8px; background: transparent; color: #fff; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; text-decoration: none; text-align: center; transition: all 0.3s ease; }
+        
+        /* Added disabled state for links/buttons */
+        .btn.disabled { opacity: 0.5; pointer-events: none; cursor: not-allowed; }
+        
         input { width: 100%; padding: 12px; border: 1px solid var(--grey); border-radius: 8px; background: #111; color: #fff; box-sizing: border-box; outline: none; margin-top: 5px; font-size: 13px; transition: opacity 0.3s ease; }
         input:disabled { opacity: 0.3; cursor: not-allowed; }
         
@@ -38,12 +41,12 @@
 
     <div class="step-row active" id="s1">
         <div class="icon">1</div>
-        <div style="flex:1"><a href="https://soundcloud.com/nathn-techno" target="_blank" class="btn" onclick="done(1)">Follow on SoundCloud</a></div>
+        <div style="flex:1"><a href="https://soundcloud.com/nathn-techno" target="_blank" class="btn" id="btn-1" onclick="done(1)">Follow on SoundCloud</a></div>
     </div>
 
     <div class="step-row" id="s2">
         <div class="icon">2</div>
-        <div style="flex:1"><a href="https://soundcloud.com/nathn-techno/samuel-moriero-industrial-edit#comments" id="comment-link" target="_blank" class="btn" onclick="done(2)">Like & Comment</a></div>
+        <div style="flex:1"><a href="https://soundcloud.com/nathn-techno/samuel-moriero-industrial-edit#comments" id="comment-link" target="_blank" class="btn disabled" onclick="done(2)">Like & Comment</a></div>
     </div>
 
     <div class="step-row" id="s3">
@@ -74,12 +77,21 @@
     };
 
     function done(n) {
+        // Mark current step as completed
         document.getElementById(`s${n}`).classList.replace('active', 'completed');
-        const nextStep = document.getElementById(`s${n+1}`);
-        if(nextStep) nextStep.classList.add('active');
+        
+        // Find and activate next step row
+        const nextStepRow = document.getElementById(`s${n+1}`);
+        if(nextStepRow) nextStepRow.classList.add('active');
 
-        // Logic to unlock after Step 2 is clicked
-        if(n >= 2) {
+        // Logic for unlocking Step 2 after Step 1 is done
+        if(n === 1) {
+            const step2Btn = document.getElementById('comment-link');
+            step2Btn.classList.remove('disabled');
+        }
+
+        // Logic for unlocking inputs after Step 2 is done
+        if(n === 2) {
             document.getElementById('sc-user').disabled = false;
             document.getElementById('email').disabled = false;
             const mainBtn = document.getElementById('main-btn');
@@ -94,7 +106,10 @@
         const btn = document.getElementById('main-btn');
         const msg = document.getElementById('msg');
 
-        if(!user || !email.includes('@')) { alert("Please complete steps 3 and 4."); return; }
+        if(!user || !email.includes('@')) { 
+            alert("Please enter your username and email."); 
+            return; 
+        }
 
         btn.innerText = "VERIFYING...";
         msg.style.display = "block";
@@ -108,13 +123,17 @@
             const data = await res.json();
 
             if(data.verified) {
-                btn.style.background = "#1db954"; btn.style.color = "#fff"; btn.innerText = "VERIFIED";
+                btn.style.background = "#1db954"; 
+                btn.style.color = "#fff"; 
+                btn.innerText = "VERIFIED";
                 window.location.href = data.download_url;
             } else {
                 btn.innerText = "TRY AGAIN";
                 msg.innerText = data.message || "COMMENT NOT FOUND";
             }
-        } catch (e) { msg.innerText = "SERVER ERROR - TRY AGAIN"; }
+        } catch (e) { 
+            msg.innerText = "SERVER ERROR - TRY AGAIN"; 
+        }
     }
 </script>
 </body>
