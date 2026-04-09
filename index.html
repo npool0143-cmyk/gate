@@ -64,16 +64,17 @@
 </div>
 
 <script>
-    const urlParams = new URLSearchParams(window.location.search);
+const urlParams = new URLSearchParams(window.location.search);
     
     const CONFIG = {
         clientId: "5ChG6y33NgVn7MfiTrHOUoo35Dz1XDLf",
-        redirectUri: "https://gate.poolmedia.nl", // ROOT DOMAIN
+        redirectUri: "https://gate.poolmedia.nl", 
         myUserId: "279262234", 
         trackId: urlParams.get('id') || "2101976640",
         trackTitle: (urlParams.get('title') || "HIT 'EM").replace(/_/g, ' '),
         artworkUrl: urlParams.get('img') || "https://i1.sndcdn.com/artworks-cjZOWSbn0TygOyym-bTcrKw-t1080x1080.png",
-        downloadUrl: "https://drive.google.com/uc?export=download&id=1IbhMmKd8yfYrUPP-AmjV2wgNm1mipJIV"
+        // This line now looks for 'file=' in your URL:
+        downloadUrl: "https://drive.google.com/uc?export=download&id=" + (urlParams.get('file') || "1IbhMmKd8yfYrUPP-AmjV2wgNm1mipJIV")
     };
 
     document.getElementById('display-title').innerText = CONFIG.trackTitle;
