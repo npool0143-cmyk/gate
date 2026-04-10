@@ -8,17 +8,20 @@
         :root { --accent: #ff5500; --bg: #000; --card: #0a0a0a; --grey: #222; --success: #1db954; }
         body { background: var(--bg); color: #fff; font-family: 'Helvetica', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 40px 0; }
         .container { width: 90%; max-width: 420px; background: var(--card); padding: 40px; border-radius: 16px; border: 1px solid var(--grey); box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center; }
-        .top-artwork { width: 60%; aspect-ratio: 1/1; border-radius: 12px; object-fit: cover; margin-bottom: 25px; border: 1px solid var(--grey); }
+        .top-artwork { width: 100%; aspect-ratio: 1/1; border-radius: 12px; object-fit: cover; margin-bottom: 25px; border: 1px solid var(--grey); background: #111; }
         .promo-badge { background: var(--accent); color: #fff; font-size: 9px; font-weight: bold; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; display: inline-block; margin-bottom: 15px; letter-spacing: 1px; }
         h1 { font-size: 1.8rem; letter-spacing: 4px; text-transform: uppercase; margin: 0; }
-        .track-sub { color: #666; font-size: 0.8rem; margin-bottom: 40px; text-transform: uppercase; }
+        #display-title { color: #666; font-size: 0.8rem; margin-bottom: 30px; text-transform: uppercase; }
+        .comment-section { text-align: left; margin-bottom: 25px; background: #111; padding: 15px; border-radius: 8px; border: 1px solid var(--grey); }
+        .comment-section label { font-size: 10px; color: #888; text-transform: uppercase; display: block; margin-bottom: 8px; }
+        textarea { width: 100%; background: transparent; border: none; color: #fff; resize: none; outline: none; font-family: inherit; font-size: 14px; }
         .step-row { display: flex; align-items: flex-start; margin-bottom: 30px; position: relative; text-align: left; }
         .step-row:not(:last-child)::after { content: ''; position: absolute; left: 19px; top: 40px; width: 2px; height: calc(100% - 10px); background: var(--grey); z-index: 1; }
         .icon { width: 38px; height: 38px; background: var(--grey); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 20px; flex-shrink: 0; z-index: 2; border: 3px solid var(--bg); font-size: 12px; font-weight: bold; }
         .active .icon { background: var(--accent); box-shadow: 0 0 15px rgba(255,85,0,0.3); }
         .completed .icon { background: var(--success); }
         .btn { display: block; width: 100%; padding: 12px; border: 1px solid var(--grey); border-radius: 8px; background: transparent; color: #fff; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; text-decoration: none; text-align: center; transition: all 0.3s ease; }
-        .btn.disabled { opacity: 0.5; pointer-events: none; }
+        .btn.disabled { opacity: 0.4; pointer-events: none; }
         input { width: 100%; padding: 12px; border: 1px solid var(--grey); border-radius: 8px; background: #111; color: #fff; box-sizing: border-box; outline: none; margin-top: 5px; font-size: 13px; }
         #msg { font-size: 11px; color: var(--accent); margin-top: 10px; font-weight: bold; display: none; text-transform: uppercase; letter-spacing: 1px; }
     </style>
@@ -26,10 +29,15 @@
 <body>
 
 <div class="container">
-    <img src="https://i1.sndcdn.com/artworks-cjZOWSbn0TygOyym-bTcrKw-t1080x1080.png" class="top-artwork">
+    <img id="track-img" src="" class="top-artwork">
     <div class="promo-badge">Free Download</div>
     <h1>NATHN</h1>
-    <div class="track-sub">HIT 'EM</div>
+    <div id="display-title">LOADING...</div>
+
+    <div class="comment-section">
+        <label>Share a comment on the track</label>
+        <textarea id="sc-comment" rows="2" placeholder="Sick track! 🔥"></textarea>
+    </div>
 
     <div class="step-row active" id="s1">
         <div class="icon">1</div>
@@ -56,19 +64,27 @@
 </div>
 
 <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    
+    // ENDPOINTS
+    const WORKER_URL = "https://soundcloud-gate.npool0143.workers.dev"; 
+    const PIPEDREAM_URL = "https://eoobcjspcppb2jy.m.pipedream.net"; 
+
     const CONFIG = {
         clientId: "5ChG6y33NgVn7MfiTrHOUoo35Dz1XDLf",
-        redirectUri: "https://gate.poolmedia.nl",
-        myUserId: "279262234",
-        trackId: "2101976640",
-        downloadUrl: "https://drive.google.com/uc?export=download&id=1IbhMmKd8yfYrUPP-AmjV2wgNm1mipJIV",
-        workerUrl: "https://soundcloud-gate.npool0143.workers.dev",
-        pipedreamUrl: "https://eoobcjspcppb2jy.m.pipedream.net"
+        redirectUri: "https://gate.poolmedia.nl", 
+        myUserId: "279262234", 
+        trackId: urlParams.get('id') || "2101976640",
+        trackTitle: (urlParams.get('title') || "HIT 'EM").replace(/_/g, ' '),
+        artworkUrl: urlParams.get('img') || "https://i1.sndcdn.com/artworks-cjZOWSbn0TygOyym-bTcrKw-t1080x1080.png",
+        downloadUrl: "https://drive.google.com/uc?export=download&id=" + (urlParams.get('file') || "1IbhMmKd8yfYrUPP-AmjV2wgNm1mipJIV")
     };
+
+    document.getElementById('display-title').innerText = CONFIG.trackTitle;
+    document.getElementById('track-img').src = CONFIG.artworkUrl;
 
     let authCode = null;
 
-    // Handle SoundCloud Popup
     if (window.opener && window.location.search.includes("code=")) {
         const code = new URLSearchParams(window.location.search).get("code");
         window.opener.postMessage({type: "SC_CODE", code: code}, "*");
@@ -88,6 +104,9 @@
     });
 
     function done(n) {
+        const currentBtn = document.getElementById(n === 1 ? 'btn-1' : 'btn-2');
+        currentBtn.innerText = "SUCCESSFUL";
+        currentBtn.style.background = "var(--success)";
         document.getElementById(`s${n}`).classList.replace('active', 'completed');
         if (n === 1) {
             document.getElementById('s2').classList.add('active');
@@ -99,7 +118,7 @@
     }
 
     document.getElementById('email').addEventListener('input', function() {
-        if(this.value.includes('@')) {
+        if(this.value.includes('@') && this.value.length > 5) {
             document.getElementById('s3').classList.replace('active', 'completed');
             document.getElementById('s4').classList.add('active');
             document.getElementById('main-btn').disabled = false;
@@ -110,44 +129,56 @@
     async function verify() {
         const btn = document.getElementById('main-btn');
         const msg = document.getElementById('msg');
-        const emailVal = document.getElementById('email').value;
-
-        btn.innerText = "VERIFYING...";
+        const commentText = document.getElementById('sc-comment').value || "Sick track! 🔥";
+        const fanEmail = document.getElementById('email').value;
+        
+        btn.innerText = "PROCESSING...";
         msg.style.display = "block";
+        msg.innerText = "SAVING DATA & UPDATING SOUNDCLOUD...";
 
         try {
-            // 1. Send to Pipedream (Using your old working keys)
-            fetch(CONFIG.pipedreamUrl, {
+            // 1. LOG TO PIPEDREAM (Standalone Email Capture)
+            // Uses your exact spreadsheet field mappings
+            fetch(PIPEDREAM_URL, {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ 
-                    sc_user: "VERIFIED_USER", 
-                    email: emailVal, 
-                    track_id: CONFIG.trackId, 
-                    type: "real_gate_signup" 
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    fan_username: "NATHN_FAN", 
+                    fan_email: fanEmail,
+                    track_name: CONFIG.trackTitle
                 })
             });
 
-            // 2. Send to Worker (To do the real Like/Follow)
-            await fetch(CONFIG.workerUrl, {
+            // 2. SOUNDCLOUD ACTIONS (Worker)
+            const response = await fetch(WORKER_URL, {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     code: authCode,
                     trackId: CONFIG.trackId,
-                    myUserId: CONFIG.myUserId,
-                    comment: "Sick track! 🔥"
+                    comment: commentText,
+                    myUserId: CONFIG.myUserId
                 })
             });
 
-            btn.style.background = "#1db954";
-            btn.innerText = "SUCCESSFUL";
-            setTimeout(() => { window.location.href = CONFIG.downloadUrl; }, 1500);
-
+            const result = await response.json();
+            
+            if (result.success) {
+                msg.innerText = "ALL ACTIONS COMPLETED!";
+            } else {
+                msg.innerText = "STARTING DOWNLOAD...";
+            }
         } catch (e) {
-            window.location.href = CONFIG.downloadUrl;
+            console.error("Error:", e);
+            msg.innerText = "STARTING DOWNLOAD...";
         }
+
+        setTimeout(() => {
+            window.location.href = CONFIG.downloadUrl;
+        }, 2000);
     }
 </script>
 </body>
 </html>
+
+
