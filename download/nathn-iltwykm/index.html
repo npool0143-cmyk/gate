@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NATHN | Free Download</title>
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/npool0143-cmyk/gate/refs/heads/main/assets/nathn-favicon.png">
+    <style>
+        :root { --accent: #ff5500; --bg: #000; --card: #0a0a0a; --grey: #222; --success: #1db954; }
+        body { background: var(--bg); color: #fff; font-family: 'Helvetica', sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 40px 0; }
+        .container { width: 90%; max-width: 420px; background: var(--card); padding: 40px; border-radius: 16px; border: 1px solid var(--grey); box-shadow: 0 20px 50px rgba(0,0,0,0.8); text-align: center; }
+        .top-artwork { display: block; margin: auto; margin-bottom: 20px;;width: 60%; aspect-ratio: 1/1; border-radius: 12px; object-fit: cover; margin-bottom: 25px; border: 1px solid var(--grey); background: #111; }
+        .promo-badge { background: var(--accent); color: #fff; font-size: 9px; font-weight: bold; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; display: inline-block; margin-bottom: 15px; letter-spacing: 1px; }
+        h1 { font-size: 1.8rem; letter-spacing: 4px; text-transform: uppercase; margin: 0; }
+        #display-title { color: #666; font-size: 0.8rem; margin-bottom: 30px; text-transform: uppercase; }
+
+        .help-text {
+            margin-top: 25px;
+            font-size: 10px;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1.6;
+        }
+        
+        .help-text a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .help-text a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Layout & Connection Lines */
+        .step-row { display: flex; align-items: flex-start; margin-bottom: 25px; position: relative; text-align: left; }
+        .step-row:not(:last-child)::after { content: ''; position: absolute; left: 19px; top: 40px; width: 2px; height: calc(100% - 10px); background: var(--grey); z-index: 1; }
+        
+        /* Step Icons */
+        .icon { width: 38px; height: 38px; background: var(--grey); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 20px; flex-shrink: 0; z-index: 2; border: 3px solid var(--bg); font-size: 12px; font-weight: bold; transition: all 0.3s ease; }
+        .active .icon { background: var(--accent); box-shadow: 0 0 15px rgba(255,85,0,0.3); }
+        .completed .icon { background: var(--success); }
+        
+        .content-box { flex: 1; }
+        .comment-box { background: #111; padding: 12px; border-radius: 8px; border: 1px solid var(--grey); }
+        .comment-box label { font-size: 9px; color: #888; text-transform: uppercase; display: block; margin-bottom: 5px; }
+        textarea { width: 100%; background: transparent; border: none; color: #fff; resize: none; outline: none; font-family: inherit; font-size: 13px; }
+        
+        /* Buttons General */
+        .btn { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px;
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid var(--grey); 
+            border-radius: 8px; 
+            background: transparent; 
+            color: #fff; 
+            font-size: 11px; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            cursor: pointer; 
+            text-decoration: none; 
+            transition: all 0.3s ease; 
+            box-sizing: border-box;
+        }
+        
+        .btn.disabled { opacity: 0.3; pointer-events: none; }
+        
+        /* SoundCloud Branding */
+        #btn-connect:not(.disabled) { background: #ff5500; border: none; }
+        
+        .sc-icon { 
+            width: 18px; 
+            height: auto; 
+            display: block; /* Prevents alignment drift */
+        }
+
+        /* Input Styling */
+        input { width: 100%; padding: 12px; border: 1px solid var(--grey); border-radius: 8px; background: #111; color: #fff; box-sizing: border-box; outline: none; font-size: 13px; }
+        input:disabled { opacity: 0.3; }
+
+        /* Final Action Button */
+        #main-btn { margin-top: 10px; background: #fff; color: #000; border: none; }
+        #msg { font-size: 10px; color: var(--accent); margin-top: 10px; font-weight: bold; display: none; text-transform: uppercase; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <img id="track-img" src="" class="top-artwork">
+    <div class="promo-badge">Free Download</div>
+    <h1>NATHN</h1>
+    <div id="display-title">LOADING...</div>
+
+    <div class="step-row active" id="s1">
+        <div class="icon">1</div>
+        <div class="content-box">
+            <div class="comment-box">
+                <label>Leave a comment</label>
+                <textarea id="sc-comment" rows="2" placeholder="Write something..."></textarea>
+            </div>
+        </div>
+    </div>
+
+<div class="step-row" id="s2">
+        <div class="icon">2</div>
+        <div class="content-box">
+            <button class="btn disabled" id="btn-connect" onclick="startConnect()">
+                <img src="https://raw.githubusercontent.com/npool0143-cmyk/gate/refs/heads/main/assets/soundcloud-white-icon.png" class="sc-icon" alt="SoundCloud logo">Connect SoundCloud
+            </button>
+        </div>
+    </div>
+
+    <div class="step-row" id="s3">
+        <div class="icon">3</div>
+        <div class="content-box">
+            <button class="btn disabled" id="btn-insta" onclick="window.open('https://www.instagram.com/nathn.techno', '_blank'); doneStep(3)">Follow on Instagram</button>
+        </div>
+    </div>
+
+    <div class="step-row" id="s4">
+        <div class="icon">4</div>
+        <div class="content-box">
+            <input type="email" id="email" placeholder="Email Address" disabled>
+        </div>
+    </div>
+
+    <div style="margin-top: 30px; border-top: 1px solid var(--grey); padding-top: 20px;">
+        <button class="btn disabled" id="main-btn" onclick="verify()">Verify & Download</button>
+        <div id="msg">PROCESSING...</div>
+    </div>
+    <div class="help-text">
+        Download not working?<br>
+        Contact me on instagram <a href="https://www.instagram.com/nathn.techno" target="_blank">@nathn.techno</a>
+    </div>
+</div>
+
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const WORKER_URL = "https://soundcloud-gate.npool0143.workers.dev"; 
+    const PIPEDREAM_URL = "https://eoobcjspcppb2jy.m.pipedream.net"; 
+
+  
+  
+  /* CHANGE THIS INFO EACH TRACK */
+  
+    const CONFIG = {
+        clientId: "5ChG6y33NgVn7MfiTrHOUoo35Dz1XDLf",
+        redirectUri: "https://gate.poolmedia.nl", 
+        myUserId: "248988428", 
+  /* CHANGE TRACK ID */
+        trackId: urlParams.get('id') || "1790067580",
+  /* CHANGE TRACK TITLE */
+        trackTitle: (urlParams.get('title') || "I LIKE THE WAY YOU KISS ME").replace(/_/g, ' '),
+  /* CHANGE TRACK IMAGE */
+        artworkUrl: urlParams.get('img') || "https://i1.sndcdn.com/artworks-8lDjlPRubeph9Lxt-rY8yhA-t500x500.jpg",
+  /* CHANGE GOOGLE DRIVE DOWNLOAD ID */
+        downloadUrl: "https://drive.google.com/uc?export=download&id=" + (urlParams.get('file') || "1I77JpMwMRRb6NZHSKefX0JO7o7i9lQ2f")
+    };
+
+
+
+    document.getElementById('display-title').innerText = CONFIG.trackTitle;
+    document.getElementById('track-img').src = CONFIG.artworkUrl;
+
+    let authCode = null;
+
+    // Logic for Step 1 -> Step 2 (Unlock with 1 character, re-lock if empty)
+    document.getElementById('sc-comment').addEventListener('input', function() {
+        const btnConnect = document.getElementById('btn-connect');
+        const s1 = document.getElementById('s1');
+        const s2 = document.getElementById('s2');
+
+        if(this.value.trim().length >= 1) {
+            s1.classList.replace('active', 'completed');
+            s2.classList.add('active');
+            btnConnect.classList.remove('disabled');
+        } else {
+            s1.classList.replace('completed', 'active');
+            s2.classList.remove('active');
+            btnConnect.classList.add('disabled');
+        }
+    });
+
+    // SC Popup Handler
+    if (window.opener && window.location.search.includes("code=")) {
+        const code = new URLSearchParams(window.location.search).get("code");
+        window.opener.postMessage({type: "SC_CODE", code: code}, "*");
+        window.close();
+    }
+
+    function startConnect() {
+        const authUrl = `https://secure.soundcloud.com/authorize?client_id=${CONFIG.clientId}&redirect_uri=${encodeURIComponent(CONFIG.redirectUri)}&response_type=code&display=popup`;
+        window.open(authUrl, "SCAuth", "width=450,height=600");
+    }
+
+    window.addEventListener("message", (event) => {
+        if (event.data.type === "SC_CODE") {
+            authCode = event.data.code;
+            doneStep(2);
+        }
+    });
+
+    function doneStep(n) {
+        document.getElementById(`s${n}`).classList.replace('active', 'completed');
+        if (n === 2) {
+            const btn = document.getElementById('btn-connect');
+            btn.innerText = "CONNECTED";
+            btn.style.background = "var(--success)";
+            document.getElementById('s3').classList.add('active');
+            document.getElementById('btn-insta').classList.remove('disabled');
+        } else if (n === 3) {
+            const btn = document.getElementById('btn-insta');
+            btn.innerText = "FOLLOWED";
+            btn.style.background = "var(--success)";
+            document.getElementById('s4').classList.add('active');
+            document.getElementById('email').disabled = false;
+        }
+    }
+
+    // Logic for Step 4 -> Verify
+    document.getElementById('email').addEventListener('input', function() {
+        if(this.value.includes('@') && this.value.length > 5) {
+            document.getElementById('s4').classList.replace('active', 'completed');
+            document.getElementById('main-btn').classList.remove('disabled');
+            document.getElementById('main-btn').style.opacity = "1";
+        } else {
+            document.getElementById('s4').classList.replace('completed', 'active');
+            document.getElementById('main-btn').classList.add('disabled');
+        }
+    });
+
+    async function verify() {
+        const btn = document.getElementById('main-btn');
+        const msg = document.getElementById('msg');
+        const commentText = document.getElementById('sc-comment').value;
+        const fanEmail = document.getElementById('email').value;
+        
+        btn.innerText = "VERIFYING...";
+        msg.style.display = "block";
+
+        try {
+            fetch(PIPEDREAM_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sc_user: "NATHN_FAN", email: fanEmail, track_name: CONFIG.trackTitle })
+            });
+
+            await fetch(WORKER_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ code: authCode, trackId: CONFIG.trackId, comment: commentText, myUserId: CONFIG.myUserId })
+            });
+
+            msg.innerText = "SUCCESS! DOWNLOADING YOUR TRACK...";
+            btn.style.background = "var(--success)";
+        } catch (e) {
+            msg.innerText = "DONE!";
+        }
+
+        setTimeout(() => { window.location.href = CONFIG.downloadUrl; }, 1500);
+    }
+</script>
+</body>
+</html>
