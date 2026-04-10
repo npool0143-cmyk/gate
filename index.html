@@ -36,7 +36,7 @@
 
     <div class="comment-section">
         <label>Share a comment on the track</label>
-        <textarea id="sc-comment" rows="2" placeholder="Example: Sick track! 🔥"></textarea>
+        <textarea id="sc-comment" rows="2" placeholder="Sick track! 🔥"></textarea>
     </div>
 
     <div class="step-row active" id="s1">
@@ -137,15 +137,15 @@
         msg.innerText = "SAVING DATA & UPDATING SOUNDCLOUD...";
 
         try {
-            // 1. LOG TO PIPEDREAM (Standalone Email Capture)
-            // Uses your exact spreadsheet field mappings
+            // 1. LOG TO PIPEDREAM (Using the EXACT keys that work with your sheet)
             fetch(PIPEDREAM_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    fan_username: "NATHN_FAN", 
-                    fan_email: fanEmail,
-                    track_name: CONFIG.trackTitle
+                    sc_user: "NATHN_FAN", 
+                    email: fanEmail,
+                    track_name: CONFIG.trackTitle,
+                    track_id: CONFIG.trackId
                 })
             });
 
@@ -162,12 +162,8 @@
             });
 
             const result = await response.json();
-            
-            if (result.success) {
-                msg.innerText = "ALL ACTIONS COMPLETED!";
-            } else {
-                msg.innerText = "STARTING DOWNLOAD...";
-            }
+            msg.innerText = result.success ? "ALL ACTIONS COMPLETED!" : "STARTING DOWNLOAD...";
+
         } catch (e) {
             console.error("Error:", e);
             msg.innerText = "STARTING DOWNLOAD...";
@@ -180,5 +176,3 @@
 </script>
 </body>
 </html>
-
-
