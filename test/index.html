@@ -95,7 +95,6 @@
         clientId: "5ChG6y33NgVn7MfiTrHOUoo35Dz1XDLf",
         redirectUri: "https://gate.poolmedia.nl", 
         artistName: urlParams.get('artist') || "NATHN",
-        // followIds is a list from URL: follow=123,456 -> [123, 456]. Default is just you.
         followIds: urlParams.get('follow') ? urlParams.get('follow').split(',') : ["248988428"],
         igHandle: urlParams.get('ig') || "nathn.techno",
         trackId: urlParams.get('id') || "2101976640",
@@ -104,7 +103,7 @@
         downloadUrl: "https://drive.google.com/uc?export=download&id=" + (urlParams.get('file') || "1IbhMmKd8yfYrUPP-AmjV2wgNm1mipJIV")
     };
 
-    // Update UI elements from Config
+    // UI Updates
     document.getElementById('artist-name').innerText = CONFIG.artistName;
     document.getElementById('display-title').innerText = CONFIG.trackTitle;
     document.getElementById('track-img').src = CONFIG.artworkUrl;
@@ -118,7 +117,6 @@
         doneStep(3);
     }
 
-    // Step Logic
     document.getElementById('sc-comment').addEventListener('input', function() {
         if(this.value.trim().length >= 1) {
             document.getElementById('s1').classList.replace('active', 'completed');
@@ -172,12 +170,10 @@
     async function verify() {
         const btn = document.getElementById('main-btn');
         const msg = document.getElementById('msg');
-        
         btn.innerText = "VERIFYING...";
         msg.style.display = "block";
 
         try {
-            // Log to Pipedream
             fetch(PIPEDREAM_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -188,7 +184,6 @@
                 })
             });
 
-            // Trigger Worker Actions (Loops through followIds)
             await fetch(WORKER_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -196,7 +191,7 @@
                     code: authCode, 
                     trackId: CONFIG.trackId, 
                     comment: document.getElementById('sc-comment').value, 
-                    followIds: CONFIG.followIds // Array of IDs
+                    followIds: CONFIG.followIds 
                 })
             });
 
