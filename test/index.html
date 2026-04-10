@@ -28,8 +28,6 @@
         .btn.disabled { opacity: 0.3; pointer-events: none; }
         #btn-connect:not(.disabled) { background: #ff5500; border: none; }
         .sc-icon { width: 18px; height: auto; display: block; }
-        input { width: 100%; padding: 12px; border: 1px solid var(--grey); border-radius: 8px; background: #111; color: #fff; box-sizing: border-box; outline: none; font-size: 13px; }
-        input:disabled { opacity: 0.3; }
         #main-btn { margin-top: 10px; background: #fff; color: #000; border: none; }
         #msg { font-size: 10px; color: var(--accent); margin-top: 10px; font-weight: bold; display: none; text-transform: uppercase; letter-spacing: 1px; }
     </style>
@@ -67,18 +65,12 @@
             <button class="btn disabled" id="btn-insta" onclick="openInstagram()">Follow on Instagram</button>
         </div>
     </div>
-<!--
-    <div class="step-row" id="s4">
-        <div class="icon">4</div>
-        <div class="content-box">
-            <input type="email" id="email" placeholder="Email Address" disabled>
-        </div>
-    </div>
--->
+
     <div style="margin-top: 30px; border-top: 1px solid var(--grey); padding-top: 20px;">
         <button class="btn disabled" id="main-btn" onclick="verify()">Verify & Download</button>
         <div id="msg">PROCESSING...</div>
     </div>
+
     <div class="help-text">
         Download not working?<br>
         Contact <a id="help-link" href="#" target="_blank">@nathn.techno</a>
@@ -90,7 +82,6 @@
     const WORKER_URL = "https://calm-mud-824d.npool0143.workers.dev"; 
     const PIPEDREAM_URL = "https://eoobcjspcppb2jy.m.pipedream.net"; 
 
-    // Dynamic Configuration based on URL
     const CONFIG = {
         clientId: "5ChG6y33NgVn7MfiTrHOUoo35Dz1XDLf",
         redirectUri: "https://gate.poolmedia.nl", 
@@ -103,7 +94,6 @@
         downloadUrl: "https://drive.google.com/uc?export=download&id=" + (urlParams.get('file') || "1IbhMmKd8yfYrUPP-AmjV2wgNm1mipJIV")
     };
 
-    // UI Updates
     document.getElementById('artist-name').innerText = CONFIG.artistName;
     document.getElementById('display-title').innerText = CONFIG.trackTitle;
     document.getElementById('track-img').src = CONFIG.artworkUrl;
@@ -155,17 +145,10 @@
             const btn = document.getElementById('btn-insta');
             btn.innerText = "FOLLOWED";
             btn.style.background = "var(--success)";
-            document.getElementById('s4').classList.add('active');
-            document.getElementById('email').disabled = false;
-        }
-    }
-
-    document.getElementById('email').addEventListener('input', function() {
-        if(this.value.includes('@') && this.value.length > 5) {
-            document.getElementById('s4').classList.replace('active', 'completed');
+            // NOW UNLOCKS DOWNLOAD IMMEDIATELY
             document.getElementById('main-btn').classList.remove('disabled');
         }
-    });
+    }
 
     async function verify() {
         const btn = document.getElementById('main-btn');
@@ -174,12 +157,13 @@
         msg.style.display = "block";
 
         try {
+            // Log to Pipedream (Email is removed, using 'SC_USER' placeholder)
             fetch(PIPEDREAM_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ 
                     artist: CONFIG.artistName, 
-                    email: document.getElementById('email').value, 
+                    email: "NO_EMAIL_COLLECTED", 
                     track: CONFIG.trackTitle 
                 })
             });
