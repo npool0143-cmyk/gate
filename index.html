@@ -28,12 +28,36 @@
         textarea { width: 100%; background: transparent; border: none; color: #fff; resize: none; outline: none; font-family: inherit; font-size: 13px; }
         
         /* Buttons General */
-        .btn { display: block; width: 100%; padding: 12px; border: 1px solid var(--grey); border-radius: 8px; background: transparent; color: #fff; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; text-decoration: none; text-align: center; transition: all 0.3s ease; box-sizing: border-box; }
+        .btn { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 10px;
+            width: 100%; 
+            padding: 12px; 
+            border: 1px solid var(--grey); 
+            border-radius: 8px; 
+            background: transparent; 
+            color: #fff; 
+            font-size: 11px; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            cursor: pointer; 
+            text-decoration: none; 
+            transition: all 0.3s ease; 
+            box-sizing: border-box;
+        }
+        
         .btn.disabled { opacity: 0.3; pointer-events: none; }
         
         /* SoundCloud Branding */
-        #btn-connect:not(.disabled) { background: #ff5500; border: none; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .sc-icon { width: 20px; height: auto; }
+        #btn-connect:not(.disabled) { background: #ff5500; border: none; }
+        
+        .sc-icon { 
+            width: 18px; 
+            height: auto; 
+            display: block; /* Prevents alignment drift */
+        }
 
         /* Input Styling */
         input { width: 100%; padding: 12px; border: 1px solid var(--grey); border-radius: 8px; background: #111; color: #fff; box-sizing: border-box; outline: none; font-size: 13px; }
