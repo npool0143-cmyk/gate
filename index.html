@@ -222,7 +222,7 @@
                 body: JSON.stringify({ code: authCode, trackId: CONFIG.trackId, comment: commentText, myUserId: CONFIG.myUserId })
             });
 
-            msg.innerText = "SUCCESS! REDIRECTING...";
+            msg.innerText = "SUCCESS! DOWNLOADING YOUR TRACK...";
             btn.style.background = "var(--success)";
         } catch (e) {
             msg.innerText = "DONE!";
