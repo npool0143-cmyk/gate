@@ -35,13 +35,13 @@
     <div id="display-title">LOADING...</div>
 
     <div class="comment-section">
-        <label>Share a comment on the track</label>
+        <label>Share a comment on the track first</label>
         <textarea id="sc-comment" rows="2" placeholder="Sick track! 🔥"></textarea>
     </div>
 
     <div class="step-row active" id="s1">
         <div class="icon">1</div>
-        <div style="flex:1"><button class="btn" id="btn-1" onclick="startConnect()">Connect SoundCloud</button></div>
+        <div style="flex:1"><button class="btn disabled" id="btn-1" onclick="startConnect()">Connect SoundCloud</button></div>
     </div>
 
     <div class="step-row" id="s2">
@@ -84,6 +84,16 @@
     document.getElementById('track-img').src = CONFIG.artworkUrl;
 
     let authCode = null;
+
+    // --- Comment Requirement Logic ---
+    document.getElementById('sc-comment').addEventListener('input', function() {
+        const btn1 = document.getElementById('btn-1');
+        if(this.value.trim().length > 2) {
+            btn1.classList.remove('disabled');
+        } else {
+            btn1.classList.add('disabled');
+        }
+    });
 
     if (window.opener && window.location.search.includes("code=")) {
         const code = new URLSearchParams(window.location.search).get("code");
@@ -137,7 +147,6 @@
         msg.innerText = "SAVING DATA & UPDATING SOUNDCLOUD...";
 
         try {
-            // 1. LOG TO PIPEDREAM (Using the EXACT keys that work with your sheet)
             fetch(PIPEDREAM_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -149,7 +158,6 @@
                 })
             });
 
-            // 2. SOUNDCLOUD ACTIONS (Worker)
             const response = await fetch(WORKER_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
