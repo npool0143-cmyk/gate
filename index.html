@@ -12,18 +12,26 @@
         .promo-badge { background: var(--accent); color: #fff; font-size: 9px; font-weight: bold; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; display: inline-block; margin-bottom: 15px; letter-spacing: 1px; }
         h1 { font-size: 1.8rem; letter-spacing: 4px; text-transform: uppercase; margin: 0; }
         #display-title { color: #666; font-size: 0.8rem; margin-bottom: 30px; text-transform: uppercase; }
-        .comment-section { text-align: left; margin-bottom: 25px; background: #111; padding: 15px; border-radius: 8px; border: 1px solid var(--grey); }
-        .comment-section label { font-size: 10px; color: #888; text-transform: uppercase; display: block; margin-bottom: 8px; }
-        textarea { width: 100%; background: transparent; border: none; color: #fff; resize: none; outline: none; font-family: inherit; font-size: 14px; }
-        .step-row { display: flex; align-items: flex-start; margin-bottom: 30px; position: relative; text-align: left; }
+        
+        .step-row { display: flex; align-items: flex-start; margin-bottom: 25px; position: relative; text-align: left; }
         .step-row:not(:last-child)::after { content: ''; position: absolute; left: 19px; top: 40px; width: 2px; height: calc(100% - 10px); background: var(--grey); z-index: 1; }
-        .icon { width: 38px; height: 38px; background: var(--grey); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 20px; flex-shrink: 0; z-index: 2; border: 3px solid var(--bg); font-size: 12px; font-weight: bold; }
+        
+        .icon { width: 38px; height: 38px; background: var(--grey); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 20px; flex-shrink: 0; z-index: 2; border: 3px solid var(--bg); font-size: 12px; font-weight: bold; transition: all 0.3s ease; }
         .active .icon { background: var(--accent); box-shadow: 0 0 15px rgba(255,85,0,0.3); }
         .completed .icon { background: var(--success); }
+        
+        .content-box { flex: 1; }
+        .comment-box { background: #111; padding: 12px; border-radius: 8px; border: 1px solid var(--grey); }
+        .comment-box label { font-size: 9px; color: #888; text-transform: uppercase; display: block; margin-bottom: 5px; }
+        textarea { width: 100%; background: transparent; border: none; color: #fff; resize: none; outline: none; font-family: inherit; font-size: 13px; }
+        
         .btn { display: block; width: 100%; padding: 12px; border: 1px solid var(--grey); border-radius: 8px; background: transparent; color: #fff; font-size: 11px; font-weight: bold; text-transform: uppercase; cursor: pointer; text-decoration: none; text-align: center; transition: all 0.3s ease; }
-        .btn.disabled { opacity: 0.4; pointer-events: none; }
-        input { width: 100%; padding: 12px; border: 1px solid var(--grey); border-radius: 8px; background: #111; color: #fff; box-sizing: border-box; outline: none; margin-top: 5px; font-size: 13px; }
-        #msg { font-size: 11px; color: var(--accent); margin-top: 10px; font-weight: bold; display: none; text-transform: uppercase; letter-spacing: 1px; }
+        .btn.disabled { opacity: 0.3; pointer-events: none; }
+        input { width: 100%; padding: 12px; border: 1px solid var(--grey); border-radius: 8px; background: #111; color: #fff; box-sizing: border-box; outline: none; font-size: 13px; }
+        input:disabled { opacity: 0.3; }
+
+        #main-btn { margin-top: 10px; background: #fff; color: #000; border: none; }
+        #msg { font-size: 10px; color: var(--accent); margin-top: 10px; font-weight: bold; display: none; text-transform: uppercase; letter-spacing: 1px; }
     </style>
 </head>
 <body>
@@ -34,39 +42,45 @@
     <h1>NATHN</h1>
     <div id="display-title">LOADING...</div>
 
-    <div class="comment-section">
-        <label>Share a comment on the track first</label>
-        <textarea id="sc-comment" rows="2" placeholder="Sick track! 🔥"></textarea>
-    </div>
-
     <div class="step-row active" id="s1">
         <div class="icon">1</div>
-        <div style="flex:1"><button class="btn disabled" id="btn-1" onclick="startConnect()">Connect SoundCloud</button></div>
+        <div class="content-box">
+            <div class="comment-box">
+                <label>Leave a comment</label>
+                <textarea id="sc-comment" rows="2" placeholder="Write something..."></textarea>
+            </div>
+        </div>
     </div>
 
     <div class="step-row" id="s2">
         <div class="icon">2</div>
-        <div style="flex:1"><a href="https://www.instagram.com/nathn.techno" target="_blank" class="btn disabled" id="btn-2" onclick="done(2)">Follow on Instagram</a></div>
+        <div class="content-box">
+            <button class="btn disabled" id="btn-connect" onclick="startConnect()">Connect SoundCloud</button>
+        </div>
     </div>
 
     <div class="step-row" id="s3">
         <div class="icon">3</div>
-        <div style="flex:1"><input type="email" id="email" placeholder="Email Address" disabled></div>
+        <div class="content-box">
+            <a href="https://www.instagram.com/nathn.techno" target="_blank" class="btn disabled" id="btn-insta" onclick="doneStep(3)">Follow on Instagram</a>
+        </div>
     </div>
 
     <div class="step-row" id="s4">
         <div class="icon">4</div>
-        <div style="flex:1">
-            <button class="btn" id="main-btn" style="background:#fff; color:#000; opacity: 0.5;" onclick="verify()" disabled>Verify & Download</button>
-            <div id="msg">CHECKING AUTHENTICATION...</div>
+        <div class="content-box">
+            <input type="email" id="email" placeholder="Email Address" disabled>
         </div>
+    </div>
+
+    <div style="margin-top: 30px; border-top: 1px solid var(--grey); padding-top: 20px;">
+        <button class="btn disabled" id="main-btn" onclick="verify()">Verify & Download</button>
+        <div id="msg">PROCESSING...</div>
     </div>
 </div>
 
 <script>
     const urlParams = new URLSearchParams(window.location.search);
-    
-    // ENDPOINTS
     const WORKER_URL = "https://soundcloud-gate.npool0143.workers.dev"; 
     const PIPEDREAM_URL = "https://eoobcjspcppb2jy.m.pipedream.net"; 
 
@@ -85,16 +99,16 @@
 
     let authCode = null;
 
-    // --- Comment Requirement Logic ---
+    // Logic for Step 1 -> Step 2
     document.getElementById('sc-comment').addEventListener('input', function() {
-        const btn1 = document.getElementById('btn-1');
-        if(this.value.trim().length > 2) {
-            btn1.classList.remove('disabled');
-        } else {
-            btn1.classList.add('disabled');
+        if(this.value.trim().length > 3) {
+            document.getElementById('s1').classList.replace('active', 'completed');
+            document.getElementById('s2').classList.add('active');
+            document.getElementById('btn-connect').classList.remove('disabled');
         }
     });
 
+    // SC Popup Handler
     if (window.opener && window.location.search.includes("code=")) {
         const code = new URLSearchParams(window.location.search).get("code");
         window.opener.postMessage({type: "SC_CODE", code: code}, "*");
@@ -109,29 +123,32 @@
     window.addEventListener("message", (event) => {
         if (event.data.type === "SC_CODE") {
             authCode = event.data.code;
-            done(1);
+            doneStep(2);
         }
     });
 
-    function done(n) {
-        const currentBtn = document.getElementById(n === 1 ? 'btn-1' : 'btn-2');
-        currentBtn.innerText = "SUCCESSFUL";
-        currentBtn.style.background = "var(--success)";
+    function doneStep(n) {
         document.getElementById(`s${n}`).classList.replace('active', 'completed');
-        if (n === 1) {
-            document.getElementById('s2').classList.add('active');
-            document.getElementById('btn-2').classList.remove('disabled');
-        } else if (n === 2) {
+        if (n === 2) {
+            const btn = document.getElementById('btn-connect');
+            btn.innerText = "CONNECTED";
+            btn.style.background = "var(--success)";
             document.getElementById('s3').classList.add('active');
+            document.getElementById('btn-insta').classList.remove('disabled');
+        } else if (n === 3) {
+            const btn = document.getElementById('btn-insta');
+            btn.innerText = "FOLLOWED";
+            btn.style.background = "var(--success)";
+            document.getElementById('s4').classList.add('active');
             document.getElementById('email').disabled = false;
         }
     }
 
+    // Logic for Step 4 -> Verify
     document.getElementById('email').addEventListener('input', function() {
         if(this.value.includes('@') && this.value.length > 5) {
-            document.getElementById('s3').classList.replace('active', 'completed');
-            document.getElementById('s4').classList.add('active');
-            document.getElementById('main-btn').disabled = false;
+            document.getElementById('s4').classList.replace('active', 'completed');
+            document.getElementById('main-btn').classList.remove('disabled');
             document.getElementById('main-btn').style.opacity = "1";
         }
     });
@@ -139,47 +156,32 @@
     async function verify() {
         const btn = document.getElementById('main-btn');
         const msg = document.getElementById('msg');
-        const commentText = document.getElementById('sc-comment').value || "Sick track! 🔥";
+        const commentText = document.getElementById('sc-comment').value;
         const fanEmail = document.getElementById('email').value;
         
-        btn.innerText = "PROCESSING...";
+        btn.innerText = "VERIFYING...";
         msg.style.display = "block";
-        msg.innerText = "SAVING DATA & UPDATING SOUNDCLOUD...";
 
         try {
             fetch(PIPEDREAM_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    sc_user: "NATHN_FAN", 
-                    email: fanEmail,
-                    track_name: CONFIG.trackTitle,
-                    track_id: CONFIG.trackId
-                })
+                body: JSON.stringify({ sc_user: "NATHN_FAN", email: fanEmail, track_name: CONFIG.trackTitle })
             });
 
-            const response = await fetch(WORKER_URL, {
+            await fetch(WORKER_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    code: authCode,
-                    trackId: CONFIG.trackId,
-                    comment: commentText,
-                    myUserId: CONFIG.myUserId
-                })
+                body: JSON.stringify({ code: authCode, trackId: CONFIG.trackId, comment: commentText, myUserId: CONFIG.myUserId })
             });
 
-            const result = await response.json();
-            msg.innerText = result.success ? "ALL ACTIONS COMPLETED!" : "STARTING DOWNLOAD...";
-
+            msg.innerText = "SUCCESS! REDIRECTING...";
+            btn.style.background = "var(--success)";
         } catch (e) {
-            console.error("Error:", e);
-            msg.innerText = "STARTING DOWNLOAD...";
+            msg.innerText = "DONE!";
         }
 
-        setTimeout(() => {
-            window.location.href = CONFIG.downloadUrl;
-        }, 2000);
+        setTimeout(() => { window.location.href = CONFIG.downloadUrl; }, 1500);
     }
 </script>
 </body>
