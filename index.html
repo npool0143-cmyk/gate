@@ -13,6 +13,25 @@
         .promo-badge { background: var(--accent); color: #fff; font-size: 9px; font-weight: bold; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; display: inline-block; margin-bottom: 15px; letter-spacing: 1px; }
         h1 { font-size: 1.8rem; letter-spacing: 4px; text-transform: uppercase; margin: 0; }
         #display-title { color: #666; font-size: 0.8rem; margin-bottom: 30px; text-transform: uppercase; }
+
+        .help-text {
+            margin-top: 25px;
+            font-size: 10px;
+            color: #555;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            line-height: 1.6;
+        }
+        
+        .help-text a {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .help-text a:hover {
+            text-decoration: underline;
+        }
         
         /* Layout & Connection Lines */
         .step-row { display: flex; align-items: flex-start; margin-bottom: 25px; position: relative; text-align: left; }
@@ -113,6 +132,10 @@
     <div style="margin-top: 30px; border-top: 1px solid var(--grey); padding-top: 20px;">
         <button class="btn disabled" id="main-btn" onclick="verify()">Verify & Download</button>
         <div id="msg">PROCESSING...</div>
+    </div>
+    <div class="help-text">
+        Download not working?<br>
+        Contact me on instagram <a href="https://www.instagram.com/nathn.techno" target="_blank">@nathn.techno</a>
     </div>
 </div>
 
