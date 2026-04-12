@@ -140,15 +140,6 @@
 </div>
 
 <script>
-
-    // 1. Check if the user declined or if there is an error
-const urlParams = new URLSearchParams(window.location.search);
-if (urlParams.has('error')) {
-    // If this is the popup window, just close it
-    if (window.opener) {
-        window.close();
-    }
-}
     
     const urlParams = new URLSearchParams(window.location.search);
     const WORKER_URL = "https://soundcloud-gate.npool0143.workers.dev"; 
