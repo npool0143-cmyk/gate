@@ -140,19 +140,6 @@
 </div>
 
 <script>
-
-    // 1. POPUP HANDLER (Handles Code & Decline)
-const urlParams = new URLSearchParams(window.location.search);
-if (window.opener) {
-    if (urlParams.has("code")) {
-        // Sends the code back to your main page
-        window.opener.postMessage({type: "SC_CODE", code: urlParams.get("code")}, "*");
-        window.close();
-    } else if (urlParams.has("error")) {
-        // If they hit 'Decline', just kill the popup immediately
-        window.close(); 
-    }
-}
     
     const urlParams = new URLSearchParams(window.location.search);
     const WORKER_URL = "https://soundcloud-gate.npool0143.workers.dev"; 
