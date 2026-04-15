@@ -233,22 +233,17 @@ async function verify() {
     btn.innerText = "VERIFYING...";
     msg.style.display = "block";
 
-    // --- GOOGLE FORM CONFIG ---
-    const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScHZJvKdBDQrK-zJ4Pf-ch54KYadqTPmHNMko9cJFJ-uzn-0A/formResponse";
-    const formData = new FormData();
-    formData.append("entry.1988362623", "NATHN");           // Artist Name
-    formData.append("entry.1846523660", fanEmail);          // Fan Email
-    formData.append("entry.468205113", CONFIG.trackTitle);  // Track Name
+    // --- CONSTRUCT THE GOOGLE URL DIRECTLY ---
+    const baseUrl = "https://docs.google.com/forms/d/e/1FAIpQLScHZJvKdBDQrK-zJ4Pf-ch54KYadqTPmHNMko9cJFJ-uzn-0A/formResponse";
+    
+    // We encode the values to make sure special characters like '@' don't break the link
+    const queryUrl = `${baseUrl}?usp=pp_url&entry.1988362623=NATHN&entry.1846523660=${encodeURIComponent(fanEmail)}&entry.468205113=${encodeURIComponent(CONFIG.trackTitle)}&submit=Submit`;
 
     try {
-        // Submit to Google Sheets (Hidden)
-        fetch(FORM_URL, { 
-            method: "POST", 
-            mode: "no-cors", 
-            body: formData 
-        });
+        // Send to Google via a simple background fetch
+        fetch(queryUrl, { mode: 'no-cors' });
 
-        // SoundCloud Worker Tasks (Follow/Comment)
+        // Your SoundCloud Worker
         await fetch(WORKER_URL, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -263,14 +258,10 @@ async function verify() {
         msg.innerText = "SUCCESS! DOWNLOADING...";
         btn.style.background = "var(--success)";
     } catch (e) {
-        console.error("Capture failed:", e);
         msg.innerText = "DONE!";
     }
     
-    // Final redirect
-    setTimeout(() => { 
-        window.location.href = CONFIG.downloadUrl; 
-    }, 1500);
+    setTimeout(() => { window.location.href = CONFIG.downloadUrl; }, 1500);
 }
 </script>
 </body>
