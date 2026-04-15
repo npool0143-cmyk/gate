@@ -234,36 +234,45 @@
         }
     });
 
-    async function verify() {
-        const btn = document.getElementById('main-btn');
-        const msg = document.getElementById('msg');
-        const commentText = document.getElementById('sc-comment').value;
-        const fanEmail = document.getElementById('email').value;
-        
-        btn.innerText = "VERIFYING...";
-        msg.style.display = "block";
+async function verify() {
+    const btn = document.getElementById('main-btn');
+    const msg = document.getElementById('msg');
+    const commentText = document.getElementById('sc-comment').value;
+    const fanEmail = document.getElementById('email').value;
+    
+    btn.innerText = "VERIFYING...";
+    msg.style.display = "block";
 
-        try {
-            fetch(PIPEDREAM_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ sc_user: "NATHN_FAN", email: fanEmail, track_name: CONFIG.trackTitle })
-            });
+    // --- CONSTRUCT THE GOOGLE URL DIRECTLY ---
+    const baseUrl = "https://docs.google.com/forms/d/e/1FAIpQLScHZJvKdBDQrK-zJ4Pf-ch54KYadqTPmHNMko9cJFJ-uzn-0A/formResponse";
+    
+    // We encode the values to make sure special characters like '@' don't break the link
+    const queryUrl = `${baseUrl}?usp=pp_url&entry.1988362623=NATHN&entry.1846523660=${encodeURIComponent(fanEmail)}&entry.468205113=${encodeURIComponent(CONFIG.trackTitle)}&submit=Submit`;
 
-            await fetch(WORKER_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ code: authCode, trackId: CONFIG.trackId, comment: commentText, myUserId: CONFIG.myUserId })
-            });
+    try {
+        // Send to Google via a simple background fetch
+        fetch(queryUrl, { mode: 'no-cors' });
 
-            msg.innerText = "SUCCESS! DOWNLOADING YOUR TRACK...";
-            btn.style.background = "var(--success)";
-        } catch (e) {
-            msg.innerText = "DONE!";
-        }
+        // Your SoundCloud Worker
+        await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                code: authCode, 
+                trackId: CONFIG.trackId, 
+                comment: commentText, 
+                myUserId: CONFIG.myUserId 
+            })
+        });
 
-        setTimeout(() => { window.location.href = CONFIG.downloadUrl; }, 1500);
+        msg.innerText = "SUCCESS! DOWNLOADING...";
+        btn.style.background = "var(--success)";
+    } catch (e) {
+        msg.innerText = "DONE!";
     }
+    
+    setTimeout(() => { window.location.href = CONFIG.downloadUrl; }, 1500);
+}
 </script>
 </body>
 </html>
