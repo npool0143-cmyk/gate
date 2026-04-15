@@ -224,36 +224,52 @@
         }
     });
 
-    async function verify() {
-        const btn = document.getElementById('main-btn');
-        const msg = document.getElementById('msg');
-        const commentText = document.getElementById('sc-comment').value;
-        const fanEmail = document.getElementById('email').value;
-        
-        btn.innerText = "VERIFYING...";
-        msg.style.display = "block";
+async function verify() {
+    const btn = document.getElementById('main-btn');
+    const msg = document.getElementById('msg');
+    const commentText = document.getElementById('sc-comment').value;
+    const fanEmail = document.getElementById('email').value;
+    
+    btn.innerText = "VERIFYING...";
+    msg.style.display = "block";
 
-        try {
-            fetch(PIPEDREAM_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ sc_user: "NATHN_FAN", email: fanEmail, track_name: CONFIG.trackTitle })
-            });
+    try {
+        // ADD 'await' HERE so the browser doesn't skip it
+        await fetch(PIPEDREAM_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                sc_user: "NATHN_FAN", 
+                email: fanEmail, 
+                track_name: CONFIG.trackTitle 
+            })
+        });
 
-            await fetch(WORKER_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ code: authCode, trackId: CONFIG.trackId, comment: commentText, myUserId: CONFIG.myUserId })
-            });
+        // This one is already awaited
+        await fetch(WORKER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                code: authCode, 
+                trackId: CONFIG.trackId, 
+                comment: commentText, 
+                myUserId: CONFIG.myUserId 
+            })
+        });
 
-            msg.innerText = "SUCCESS! DOWNLOADING YOUR TRACK...";
-            btn.style.background = "var(--success)";
-        } catch (e) {
-            msg.innerText = "DONE!";
-        }
-
-        setTimeout(() => { window.location.href = CONFIG.downloadUrl; }, 1500);
+        msg.innerText = "SUCCESS! DOWNLOADING YOUR TRACK...";
+        btn.style.background = "var(--success)";
+    } catch (e) {
+        console.error(e);
+        msg.innerText = "DONE!";
     }
+
+    // Delay the redirect slightly to ensure all background tasks finish
+    setTimeout(() => { 
+        window.location.href = CONFIG.downloadUrl; 
+    }, 1500);
+}
+
 </script>
 </body>
 </html>
